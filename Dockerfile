@@ -1,8 +1,6 @@
 FROM axiom/docker-tomcat:8.0
 MAINTAINER Kyle Wilcox <kyle@axiomdatascience.com>
 
-USER root
-
 RUN \
     apt-get update && \
     apt-get install -y unzip
@@ -35,6 +33,8 @@ RUN mkdir -p $ERDDAP_DATA
 RUN chown -R tomcat:tomcat "$ERDDAP_DATA"
 RUN chown -R tomcat:tomcat "$CATALINA_HOME"
 
-USER tomcat
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
+
 EXPOSE 8080 8443
 CMD ["catalina.sh", "run"]
