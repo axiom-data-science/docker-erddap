@@ -9,7 +9,7 @@ RUN \
 RUN curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o BitstreamVeraSans.zip
 RUN unzip BitstreamVeraSans.zip -d /usr/lib/jvm/java-8-oracle/jre/lib/fonts/
 
-ENV ERDDAP_VERSION 1.68
+ENV ERDDAP_VERSION 1.72
 
 # Install ERDDAP content zip
 ENV ERDDAP_CONTENT_URL http://coastwatch.pfeg.noaa.gov/erddap/download/erddapContent.zip
