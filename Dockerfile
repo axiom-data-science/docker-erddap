@@ -1,4 +1,4 @@
-FROM axiom/docker-tomcat:8.0
+FROM unidata/tomcat-docker:8
 MAINTAINER Kyle Wilcox <kyle@axiomdatascience.com>
 
 RUN \
@@ -7,7 +7,7 @@ RUN \
 
 # Install BitstreamVeraSans font
 RUN curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o BitstreamVeraSans.zip
-RUN unzip BitstreamVeraSans.zip -d /usr/lib/jvm/java-8-oracle/jre/lib/fonts/
+RUN unzip BitstreamVeraSans.zip -d $JRE_HOME/lib/fonts/
 
 ENV ERDDAP_VERSION 1.74
 

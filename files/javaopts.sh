@@ -1,10 +1,12 @@
 #!/bin/sh
 
-NORMAL="-server -d64 -Xms4G -Xmx4G"
-MAX_PERM_GEN="-XX:MaxPermSize=256m"
+# JAVA_OPTS
+MEMORY="4G"
+NORMAL="-server -d64 -Xms$MEMORY -Xmx$MEMORY"
 HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError"
 HEADLESS="-Djava.awt.headless=true"
+EXTRAS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
 CONTENT_ROOT="-DerddapContentDirectory=$CATALINA_HOME/content/erddap"
 
-JAVA_OPTS="$JAVA_OPTS $CONTENT_ROOT/ $NORMAL $MAX_PERM_GEN $HEAP_DUMP $HEADLESS"
-export JAVA_OPTS
+JAVA_OPTS="$JAVA_OPTS $NORMAL $HEAP_DUMP $HEADLESS $EXTRAS $CONTENT_ROOT/"
+echo "ERDDAP Running with: $JAVA_OPTS"

@@ -42,7 +42,7 @@ $ docker run \
 
 ### Tomcat
 
-See [these instructions](https://github.com/axiom-data-science/docker-tomcat) for configuring Tomcat
+See [these instructions](https://github.com/unidata/tomcat-docker) for configuring Tomcat
 
 
 ### ERDDAP
