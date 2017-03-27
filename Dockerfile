@@ -18,10 +18,11 @@ RUN curl -fSL "$ERDDAP_CONTENT_URL" -o erddapContent.zip
 RUN unzip erddapContent.zip -d $CATALINA_HOME
 
 # Install ERDDAP WAR
-ENV ERDDAP_WAR_URL http://coastwatch.pfeg.noaa.gov/erddap/download/erddap.war
+ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 #ENV ERDDAP_WAR_URL http://coastwatch.pfeg.noaa.gov/erddap/download/erddap$ERDDAP_VERSION.war
-RUN curl -fSL "$ERDDAP_WAR_URL" -o $CATALINA_HOME/webapps/erddap-$ERDDAP_VERSION.war
-RUN mv $CATALINA_HOME/webapps/erddap-$ERDDAP_VERSION.war $CATALINA_HOME/webapps/erddap.war
+RUN curl -fSL "$ERDDAP_WAR_URL" -o /erddap.war
+RUN unzip /erddap.war -d $CATALINA_HOME/webapps/erddap/
+
 
 # Java options
 COPY files/javaopts.sh $CATALINA_HOME/bin/javaopts.sh
