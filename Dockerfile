@@ -1,7 +1,7 @@
 FROM unidata/tomcat-docker:8
 MAINTAINER Kyle Wilcox <kyle@axiomdatascience.com>
 
-ENV ERDDAP_VERSION 1.76
+ENV ERDDAP_VERSION 1.78
 ENV ERDDAP_CONTENT_URL http://coastwatch.pfeg.noaa.gov/erddap/download/erddapContent.zip
 #ENV ERDDAP_CONTENT_URL http://coastwatch.pfeg.noaa.gov/erddap/download/erddapContent$ERDDAP_VERSION.zip
 ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
