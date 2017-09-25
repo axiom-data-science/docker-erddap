@@ -18,6 +18,17 @@ Available versions:
 $ docker run -d -p 8080:8080 axiom/docker-erddap
 ```
 
+## Running ERRDAP CLI Tools
+
+**GenerateDatasetsXml**
+
+```bash
+$ docker run --rm -it \
+  -v $(pwd)/logs:/erddapData/logs \
+  axiom/docker-erddap:latest \
+  bash -c "cd webapps/erddap/WEB-INF/ && bash GenerateDatasetsXml.sh -verbose"
+```
+
 
 ## Configuration
 
