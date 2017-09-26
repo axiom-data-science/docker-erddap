@@ -27,9 +27,6 @@ RUN \
     # Fix cache errors in Tomcat 8
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml
 
-# Until the next version of ERDDAP is released, update netcdfAll manually
-RUN curl -fSL ftp://ftp.unidata.ucar.edu/pub/netcdf-java/v4.6/netcdfAll-4.6.8.jar -o ${CATALINA_HOME}/webapps/erddap/WEB-INF/lib/netcdfAll-latest.jar
-
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
