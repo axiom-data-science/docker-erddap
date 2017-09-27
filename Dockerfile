@@ -11,7 +11,6 @@ RUN \
         unzip \
         && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o /BitstreamVeraSans.zip && \
     unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/lib/fonts/ && \
     rm /BitstreamVeraSans.zip && \
@@ -21,7 +20,8 @@ RUN \
     curl -fSL "${ERDDAP_WAR_URL}" -o /erddap.war && \
     unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
     rm /erddap.war && \
-    sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml
+    sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
