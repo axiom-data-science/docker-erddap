@@ -12,19 +12,15 @@ RUN \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    # Install Fonts
     curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o /BitstreamVeraSans.zip && \
     unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/lib/fonts/ && \
     rm /BitstreamVeraSans.zip && \
-    # Install Content
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
     unzip /erddapContent.zip -d ${CATALINA_HOME} && \
     rm /erddapContent.zip && \
-    # Install ERDDAP
     curl -fSL "${ERDDAP_WAR_URL}" -o /erddap.war && \
     unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
     rm /erddap.war && \
-    # Fix cache errors in Tomcat 8
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml
 
 # Java options
