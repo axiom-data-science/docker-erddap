@@ -7,10 +7,6 @@ ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDA
 ENV ERDDAP_DATA /erddapData
 
 RUN \
-    apt-get update && apt-get install -y \
-        unzip \
-        && \
-    apt-get clean && \
     curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o /BitstreamVeraSans.zip && \
     unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/lib/fonts/ && \
     rm /BitstreamVeraSans.zip && \
