@@ -1,4 +1,4 @@
-FROM unidata/tomcat-docker:latest
+FROM unidata/tomcat-docker:8.5
 MAINTAINER Kyle Wilcox <kyle@axiomdatascience.com>
 
 ENV ERDDAP_VERSION 1.82
@@ -24,10 +24,6 @@ COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
 # ERDDAP setup.xml
 COPY files/setup.xml ${CATALINA_HOME}/content/erddap/setup.xml
-
-RUN mkdir -p ${ERDDAP_DATA} && \
-    chown -R tomcat:tomcat "${ERDDAP_DATA}" && \
-    chown -R tomcat:tomcat "${CATALINA_HOME}"
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
