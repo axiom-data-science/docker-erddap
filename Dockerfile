@@ -17,7 +17,8 @@ RUN \
     unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
     rm /erddap.war && \
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    mkdir -p ${ERDDAP_DATA}
 
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
