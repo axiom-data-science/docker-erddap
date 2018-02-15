@@ -49,11 +49,7 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
         axiom/docker-erddap
     ```
 
-    Your content directory should contain all necessary files:
-    * `setup.xml`
-    * `datasets.xml`
-    * `images/erddapAlt.css`
-    * `images/erddapStart.css`
+    Your content directory should contain a [setup.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setup.xml) and [dataset.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html) file. It can also include CSS assets that you reference in your custom `setup.xml` file. 
 
     If you just want to change [setup.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setup.xml) and [dataset.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html), you can mount them individually:
 
