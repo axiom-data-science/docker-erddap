@@ -23,6 +23,9 @@ RUN \
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
+# Custom Tomcat server.xml for allowing extra query parameters
+COPY files/server.xml ${CATALINA_HOME}/conf/server.xml
+
 # ERDDAP setup.xml
 COPY files/setup.xml ${CATALINA_HOME}/content/erddap/setup.xml
 
