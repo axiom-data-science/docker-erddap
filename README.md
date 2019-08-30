@@ -2,16 +2,13 @@
 
 A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html)
 
-Available versions:
+Recent versions:
 
+* `axiom/docker-erddap:2.02`
 * `axiom/docker-erddap:1.82`
 * `axiom/docker-erddap:1.80`
-* `axiom/docker-erddap:1.78`
-* `axiom/docker-erddap:1.74` - first release based on `unidata/tomcat-docker`
-* `axiom/docker-erddap:1.72`
-* `axiom/docker-erddap:1.68`
-* `axiom/docker-erddap:1.66`
-* `axiom/docker-erddap:1.64`
+
+See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags).
 
 ## Quickstart
 
@@ -35,7 +32,7 @@ $ docker run --rm -it \
 
 ### Tomcat
 
-See [these instructions for configuring Tomcat](https://github.com/unidata/tomcat-docker).
+See [these instructions for configuring Tomcat](https://github.com/unidata/tomcat-docker) from the Tomcat image this is built from (`unidata/tomcat-docker`).
 
 
 ### ERDDAP
@@ -49,7 +46,7 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
         axiom/docker-erddap
     ```
 
-    Your content directory should contain a [setup.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setup.xml) and [dataset.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html) file. It can also include CSS assets that you reference in your custom `setup.xml` file. 
+    Your content directory should contain a [setup.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setup.xml) and [dataset.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html) file. It can also include CSS assets that you reference in your custom `setup.xml` file.
 
     If you just want to change [setup.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setup.xml) and [dataset.xml](http://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html), you can mount them individually:
 
