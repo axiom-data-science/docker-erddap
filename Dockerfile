@@ -8,7 +8,7 @@ ENV ERDDAP_DATA /erddapData
 
 RUN \
     curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o /BitstreamVeraSans.zip && \
-    unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/lib/fonts/ && \
+    unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/jre/lib/fonts/ && \
     rm /BitstreamVeraSans.zip && \
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
     unzip /erddapContent.zip -d ${CATALINA_HOME} && \
