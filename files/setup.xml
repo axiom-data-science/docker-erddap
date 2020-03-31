@@ -374,7 +374,7 @@ At ERD, we use "Bitstream Vera Sans"
   http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip
   and unzip the files into [javaHome]/jre/lib/fonts so Java sees them.
 -->
-<fontFamily>Bitstream Vera Sans</fontFamily>
+  <fontFamily>DejaVu Sans</fontFamily>
 
 <!-- When possible (and it isn't always possible), ERDDAP breaks source data requests
 into chunks to conserve memory. See the description of these tags in messages.xml.

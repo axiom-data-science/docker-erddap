@@ -7,9 +7,6 @@ ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDA
 ENV ERDDAP_DATA /erddapData
 
 RUN \
-    curl -fSL "http://coastwatch.pfeg.noaa.gov/erddap/download/BitstreamVeraSans.zip" -o /BitstreamVeraSans.zip && \
-    unzip /BitstreamVeraSans.zip -d ${JAVA_HOME}/lib/fonts/ && \
-    rm /BitstreamVeraSans.zip && \
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
     unzip /erddapContent.zip -d ${CATALINA_HOME} && \
     rm /erddapContent.zip && \
