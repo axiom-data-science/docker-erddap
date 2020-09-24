@@ -2,13 +2,22 @@
 
 A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html)
 
-Recent versions:
+Available versions:
 
+* `axiom/docker-erddap:latest`
 * `axiom/docker-erddap:2.02`
 * `axiom/docker-erddap:1.82`
 * `axiom/docker-erddap:1.80`
 
 See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags).
+
+The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodcally. Even for release tags.
+This makes it impossible for a downsteam project like this to maintain a reliable build process. At any point the upstream image may overwrite the base image
+this repository uses with one that does not. It has happened at least 3 times so far. If you find a bug in any of the versions above please
+[report it as an issue](https://github.com/axiom-data-science/docker-erddap/issues).
+This repository will **not** back-port changes from the upstream image to existing tags and overwrite them. If you require features from a newer upstream image
+(for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image.
+You can also build this image yourself.
 
 ## Quickstart
 
