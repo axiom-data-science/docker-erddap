@@ -1,5 +1,5 @@
 FROM unidata/tomcat-docker:8.5
-MAINTAINER Kyle Wilcox <kyle@axiomdatascience.com>
+LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
 ENV ERDDAP_VERSION 2.02
 ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
@@ -20,14 +20,11 @@ RUN \
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
-# Custom Tomcat server.xml for allowing extra query parameters
-COPY files/server.xml ${CATALINA_HOME}/conf/server.xml
-
 # ERDDAP setup.xml
 COPY files/setup.xml ${CATALINA_HOME}/content/erddap/setup.xml
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 8080 8443
+EXPOSE 8080
 CMD ["catalina.sh", "run"]
