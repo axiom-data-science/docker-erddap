@@ -25,7 +25,7 @@ You can also build this image yourself.
 $ docker run -d -p 8080:8080 axiom/docker-erddap
 ```
 
-## Running ERRDAP CLI Tools
+## Running ERDDAP CLI Tools
 
 **GenerateDatasetsXml**
 
