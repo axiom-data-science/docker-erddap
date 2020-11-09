@@ -5,11 +5,12 @@ A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pf
 Available versions:
 
 * `axiom/docker-erddap:latest`
+* `axiom/docker-erddap:2.10`
 * `axiom/docker-erddap:2.02`
 * `axiom/docker-erddap:1.82`
 * `axiom/docker-erddap:1.80`
 
-See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags).
+See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your sever.
 
 The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodcally. Even for release tags.
 This makes it impossible for a downsteam project like this to maintain a reliable build process. At any point the upstream image may overwrite the base image

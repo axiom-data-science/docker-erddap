@@ -78,6 +78,33 @@ Note that openid login doesn't work when testing with localhost (https://127.0.0
 -->
 <authentication></authentication>
 
+<!-- If authentication=google, you must supply your Google Client ID.
+See
+https://developers.google.com/identity/sign-in/web/devconsole-project
+When setting this up, for Authorized JavaScript origins,
+for testing on your computer, use the domain "localhost"
+(e.g., origin=https://localhost:8443),
+not "127.0.0.1" (because Google Sign-In doesn't work with anything
+at that domain).
+This will be a string of about 75 characters, probably starting with
+several digits and ending with .apps.googleusercontent.com .
+-->
+<googleClientID></googleClientID>
+
+<!-- If authentication=orcid or oauth2, you must supply your ORCID APP Client ID
+  (which will start with "APP-") and ORCID Client Secret (a hex number with hyphens).
+  Get these by logging into Orcid at https://orcid.org/signin.
+  Then click on "Developer Tools" (under "For Researchers" at the top).
+  Then click on "Register for the free ORCID public API".
+    Name: ERDDAP at [your organization]
+    Website: [your ERDDAP's domain]
+    Description: ERDDAP is a scientific data server. Users need to authenticate with Google or Orcid to access non-public datasets.
+    Redirect URIs: [your ERDDAP's domain]/erddap/loginOrcid.html
+  Then click on the Save icon (looks like a 3.5" disk!).
+    -->
+<orcidClientID></orcidClientID>
+<orcidClientSecret></orcidClientSecret>
+
 <!-- This specifies how you have stored passwords in the roles tags in datasets.xml.
 If you aren't storing any passwords this is irrelevant.
 The options (in order of increasing security) are:
@@ -191,6 +218,21 @@ You MUST CHANGE these to describe your installation.
 <adminCountry>USA</adminCountry>
 <adminEmail>nobody@example.com</adminEmail>
 
+<!-- Normally, if you have a EDDGridFromErddap or EDDTableFromErddap
+dataset in your datasets.xml, it will try to subscribe to the remote
+ERDDAP dataset so that the local dataset is kept perfectly up-to-date.
+If this ERDDAP is not publicly accessible (http://localhost), or its
+IP address will change soon, or you have some other reason,
+you can tell this ERDDAP to not try to subscribe to the remote
+ERDDAP datasets by setting this to false. (default=true)
+This is the overall setting for this ERDDAP. It can be overridden by
+the same tag (with a different value) in the datasets.xml chunk for
+a given EDD...FromErddap dataset.
+For each fromErddap dataset that doesn't subscribe to the remote
+ERDDAP dataset, you should set <reloadEveryNMinutes> to a smaller
+number so that the local dataset stays reasonably up-to-date. -->
+<subscribeToRemoteErddapDataset>true</subscribeToRemoteErddapDataset>
+
 <!--
 These default accessConstraints, fees, and keywords are used by
   ERDDAP's SOS, WCS, and WMS services.
@@ -231,6 +273,15 @@ for all relevant datasets, using information from the dataset's metadata.
 By default these services are on (true). -->
 <fgdcActive>true</fgdcActive>
 <iso19115Active>true</iso19115Active>
+
+<!-- The default for filesActive is "true". -->
+<filesActive>true</filesActive>
+<!-- This sets the default <accessibleViaFiles> for all of the datasets.
+     Before ERDDAP v.2.10, this tag didn't exist and the hard-coded setting was 'false'. -->
+<defaultAccessibleViaFiles>true</defaultAccessibleViaFiles>
+
+<!-- The default for dataProviderFormActive is "true". -->
+<dataProviderFormActive>true</dataProviderFormActive>
 
 <!-- For the wms examples, pick one of your grid datasets that has longitude and latitude axes.
 The sample variable must be a variable in the sample grid dataset.
