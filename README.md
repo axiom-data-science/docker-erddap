@@ -12,10 +12,7 @@ Available versions:
 
 See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your sever.
 
-The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodcally. Even for release tags.
-This makes it impossible for a downsteam project like this to maintain a reliable build process. At any point the upstream image may overwrite the base image
-this repository uses with one that does not. It has happened at least 3 times so far. If you find a bug in any of the versions above please
-[report it as an issue](https://github.com/axiom-data-science/docker-erddap/issues).
+The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodically. Even for release tags.
 This repository will **not** back-port changes from the upstream image to existing tags and overwrite them. If you require features from a newer upstream image
 (for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image.
 You can also build this image yourself.
