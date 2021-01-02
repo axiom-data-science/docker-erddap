@@ -17,6 +17,10 @@ This repository will **not** back-port changes from the upstream image to existi
 (for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image.
 You can also build this image yourself.
 
+Use `latest` image with caution as it follows the upstream image, and is not as thoroughly tested as tagged images.
+
+[Dependabot](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically) is used to automatically make PRs to update the upstream image ([`.github/dependabot.yml`](.github/dependabot.yml)).
+
 ## Quickstart
 
 ```bash

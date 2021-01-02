@@ -1,0 +1,59 @@
+name: Push
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    name: Build and test Docker Image
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Cache Docker Layers
+      uses: satackey/action-docker-layer-caching@v0.0.11
+      continue-on-error: true
+    
+    - name: Login to Docker Hub
+      uses: azure/docker-login@v1
+      continue-on-error: true
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Build Docker Image
+      run: docker build --tag axiom/docker-erddap:latest .
+
+    - name: Run Docker Image in Background
+      run: docker run -d -p 8080:8080 axiom/docker-erddap:latest
+
+    - name: Check that ERDDAP Docker Image will return a 200
+      uses: ifaxity/wait-on-action@v1
+      timeout-minutes: 1
+      with:
+        resource: http://localhost:8080/erddap/index.html
+    
+  push:
+    name: Push latest image to Docker Hub
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    needs: build
+    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Cache Docker Layers
+      uses: satackey/action-docker-layer-caching@v0.0.11
+    
+    - name: Login to Docker Hub
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Push latest image to Docker Hub if on master or main branch of Axiom's repo
+      run: docker push axiom/docker-erddap:latest
