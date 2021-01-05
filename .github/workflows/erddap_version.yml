@@ -1,0 +1,98 @@
+name: Check ERDDAP Version
+
+on:
+  schedule:
+    - cron: "0 13 * * 1-5" # Check at 8 am on weekdays
+  workflow_dispatch: 
+  # Once merged, under actions > Check ERDDAP Version there should be a 'Run Workflow' button which manually trigger a run
+    
+
+
+jobs:
+  version:
+    name: Check the current ERDDAP version
+    runs-on: ubuntu-18.04
+    timeout-minutes: 5
+    if: github.repository == 'axiom-data-science/docker-erddap'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Get ERDDAP versions, and create an issue if it is out of date
+      uses: actions/github-script@v3
+      with:
+        script: |
+          const repo_name = "docker-erddap"
+          const repo_owner = "axiom-data-science"
+          const assign_user = "kwilcox"
+
+          const fs = require("fs")
+
+          const release = await github.repos.getLatestRelease({
+            owner: "BobSimons",
+            repo: "erddap"
+          })
+          const tag = release.data.tag_name
+
+          const dockerfile = fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/Dockerfile`, "utf-8")
+          const lines = dockerfile.split("\n")
+          const docker_version_line = lines.find(line => line.includes("ERDDAP_VERSION"))
+          const docker_version = `v${docker_version_line.split(" ")[2]}`
+
+          if (tag === docker_version) {
+            console.log(`Latest Docker version (${docker_version}) matches the latest available BobSimmons/erddap release`)
+
+            return
+          }
+
+          console.log(`Latest Docker version (${docker_version}) does not match the latest available BobSimmons/erddap release (${tag})`)
+
+          const query = `query($owner: String!, $name: String!) { 
+            repository(owner: $owner, name: $name) {
+              issues(first: 5, states: OPEN) {
+                nodes {
+                  id
+                  title
+                }
+              }
+            } 
+          }`
+
+          const issue_label = "erddapversion"
+          const issue_title = `Update ERDDAP to ${tag}`
+
+          const variables = {    
+            owner: repo_owner,
+            name: repo_name,
+            label: issue_label
+          }
+          const result = await github.graphql(query, variables)
+          const issues = result.repository.issues.nodes
+          const issue_for_version = issues.find(issue => issue.title.includes(issue_title))
+
+          if (issue_for_version !== undefined) {
+            console.log(`There is already an issue created for the latest version of ERDDAP`)
+            return
+          }
+
+          console.log("Creating a new issue to update the ERDDAP version")
+
+          const issue_body = `
+            ERDDAP has been updated to ${tag}!
+
+            @${assign_user} Please update and test the version in the Dockerfile.
+          `
+
+          const issue = await github.issues.create({
+            owner: repo_owner,
+            repo: repo_name,
+            title: issue_title,
+            labels: [issue_label],
+            body: issue_body,
+            assignees: [
+              assign_user
+            ]
+          })
+
+          console.log(`New issue created at ${issue.data.html_url}`)
