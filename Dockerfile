@@ -1,4 +1,4 @@
-FROM unidata/tomcat-docker:8.5@sha256:1a5fb1b4407075613c2d8aea0b23b25a10733ffe755e367b1d4dfc8f96249023
+FROM unidata/tomcat-docker:8.5@sha256:3f8ba8c861313eb226547b7cf22592e23c66cca9185999da527195782bb89bfd
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
 ENV ERDDAP_VERSION 2.10
