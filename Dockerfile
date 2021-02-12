@@ -1,7 +1,7 @@
 FROM unidata/tomcat-docker:8.5@sha256:3f8ba8c861313eb226547b7cf22592e23c66cca9185999da527195782bb89bfd
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
-ENV ERDDAP_VERSION 2.10
+ENV ERDDAP_VERSION 2.11
 ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_DATA /erddapData
