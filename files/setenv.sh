@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # JAVA_OPTS
-MEMORY="4G"
-NORMAL="-server -d64 -Xms$MEMORY -Xmx$MEMORY"
+MEMORY="${ERDDAP_MEMORY:-4G}"
+NORMAL="-server -d64 -Xms${ERDDAP_MIN_MEMORY:-${MEMORY}} -Xmx${ERDDAP_MAX_MEMORY:-${MEMORY}}"
 HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError"
 HEADLESS="-Djava.awt.headless=true"
 EXTRAS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"

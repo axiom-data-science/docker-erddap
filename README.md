@@ -83,3 +83,17 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
     ```
 
     This is **highly** recommended, or nothing will persist across container restarts (logs/cache/etc.)
+
+
+3.  Specify the amount of memory to be allocated:
+
+   ``` bash
+
+    $ docker run \
+        --env ERDDAP_MIN_MEMORY=4G --env ERDDAP_MAX_MEMORY=8G
+        ... \
+        axiom/docker-erddap
+   ```
+
+   Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
+
