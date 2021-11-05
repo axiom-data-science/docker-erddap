@@ -14,6 +14,7 @@ RUN \
     unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
     rm /erddap.war && \
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
+    sed -i 's/.hdf, .nc, //g' ${CATALINA_HOME}/webapps/erddap/WEB-INF/classes/gov/noaa/pfel/erddap/util/messages.xml && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p ${ERDDAP_DATA}
 
