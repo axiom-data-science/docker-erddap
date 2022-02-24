@@ -1,5 +1,17 @@
 #!/bin/sh
 
+if [ -f "${CATALINA_HOME}/bin/config.sh" ];
+then
+    set -o allexport
+    source "${CATALINA_HOME}/bin/config.sh"
+    set +o allexport
+fi
+
+ERDDAP_CONFIG=$(env | grep --regexp "^ERDDAP_.*$" | sort)
+if [ -n "$ERDDAP_CONFIG" ]; then
+    echo "ERDDAP configured with: $ERDDAP_CONFIG"
+fi
+
 # JAVA_OPTS
 MEMORY="${ERDDAP_MEMORY:-4G}"
 NORMAL="-server -d64 -Xms${ERDDAP_MIN_MEMORY:-${MEMORY}} -Xmx${ERDDAP_MAX_MEMORY:-${MEMORY}}"

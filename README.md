@@ -50,10 +50,13 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
 
 ### ERDDAP
 
+Any number of these options can be taken to configure your ERDDAP container instance to your liking.
+
 1.  Mount your own `content/erddap` directory:
 
     ```bash
     $ docker run \
+        -p 8080:8080 \
         -v /path/to/your/erddap/directory:/usr/local/tomcat/content/erddap \
         ... \
         axiom/docker-erddap
@@ -65,19 +68,104 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
 
     ```bash
     $ docker run \
+        -p 8080:8080 \
         -v /path/to/your/setup.xml:/usr/local/tomcat/content/erddap/setup.xml \
         -v /path/to/your/datasets.xml:/usr/local/tomcat/content/erddap/datasets.xml \
         ... \
         axiom/docker-erddap
     ```
 
-    **Any custom setup.xml needs to specify `<bigParentDirectory>/erddapData/</bigParentDirectory>`**
+    **If you mount setup.xml file make sure to set `<bigParentDirectory>/erddapData/</bigParentDirectory>`**
 
+2. Configure using environmental variables
 
-2.  Mount your own `bigParentDirectory`:
+    You can set environmental variables to configure ERDDAP's `setup.xml` since version 2.14. See the [ERDDAP documentation](https://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setupEnvironmentVariables) for details. This can be very useful so you don't need to mount a custom `setup.xml` file into your container. If taking this approach you should look into setting the following ERDDAP config options:
+
+    * `ERDDAP_baseURL`
+    * `ERDDAP_baseHttpsUrl`
+    * `ERDDAP_flagKeyKey`
+    * `ERDDAP_emailEverythingTo`
+    * `ERDDAP_emailFromAddress`
+    * `ERDDAP_emailUserName`
+    * `ERDDAP_emailPassword`
+    * `ERDDAP_emailSmtpHost`
+    * `ERDDAP_emailSmtpPort`
+    * `ERDDAP_adminInstitution`
+    * `ERDDAP_adminInstitutionUrl`
+    * `ERDDAP_adminIndividualName`
+    * `ERDDAP_adminPosition`
+    * `ERDDAP_adminPhone`
+    * `ERDDAP_adminAddress`
+    * `ERDDAP_adminCity`
+    * `ERDDAP_adminStateOrProvince`
+    * `ERDDAP_adminPostalCode`
+    * `ERDDAP_adminCountry`
+    * `ERDDAP_adminEmail`
+
+    For example:
+
+    ```bash
+    docker run \
+        -p 8080:8080 \
+        -e ERDDAP_baseURL="http://localhost:8080" \
+        -e ERDDAP_adminEmail="set_via_container_env@example.com" \
+        axiom/docker-erddap
+    ```
+
+3. Configure using a shell script
+
+    You can mount a file called `config.sh` to `${CATALINA_HOME}/bin/config.sh` that sets any ERDDAP configuration environmental variables you want to use. This is sourced in the container-provided `setenv.sh` file and and all variables will be exported to be used by ERDDAP for configuration. These will take precedence over environmental variable specified when running the container (see above).
 
     ```bash
     $ docker run \
+        -p 8080:8080 \
+        -e ERDDAP_adminEmail="overridden_by_config_file@example.com" \
+        -v /path/to/your/config.sh:/usr/local/tomcat/bin/config.sh \
+        ... \
+        axiom/docker-erddap
+    ```
+
+    where `config.sh` contains any of the ERDDAP environmental configuration variables:
+
+    ```sh
+    ERDDAP_adminEmail="this_is_used@example.com"
+    ```
+
+    You can set any number of configuration variables in the config.sh.
+
+    ```bash
+    ERDDAP_bigParentDirectory="/erddapData/"
+    ERDDAP_baseUrl="http://localhost:8080"
+    ERDDAP_baseHttpsUrl="https://localhost:8443"
+    ERDDAP_flagKeyKey="73976bb0-9cd4-11e3-a5e2-0800200c9a66"
+
+    ERDDAP_emailEverythingTo="nobody@example.com"
+    ERDDAP_emailDailyReportsTo="nobody@example.com"
+    ERDDAP_emailFromAddress="nothing@example.com"
+    ERDDAP_emailUserName=""
+    ERDDAP_emailPassword=""
+    ERDDAP_emailProperties=""
+    ERDDAP_emailSmtpHost=""
+    ERDDAP_emailSmtpPort=""
+
+    ERDDAP_adminInstitution="Axiom Docker Install"
+    ERDDAP_adminInstitutionUrl="https://github.com/axiom-data-science/docker-erddap"
+    ERDDAP_adminIndividualName="Axiom Docker Install"
+    ERDDAP_adminPosition="Software Engineer"
+    ERDDAP_adminPhone="555-555-5555"
+    ERDDAP_adminAddress="123 Irrelevant St."
+    ERDDAP_adminCity="Nowhere"
+    ERDDAP_adminStateOrProvince="AK"
+    ERDDAP_adminPostalCode="99504"
+    ERDDAP_adminCountry="USA"
+    ERDDAP_adminEmail="nobody@example.com"
+    ```
+
+4.  Mount your own `bigParentDirectory`:
+
+    ```bash
+    $ docker run \
+        -p 8080:8080 \
         -v /path/to/your/erddap/bigParentDirectory:/erddapData \
         ... \
         axiom/docker-erddap
@@ -86,11 +174,11 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
     This is **highly** recommended, or nothing will persist across container restarts (logs/cache/etc.)
 
 
-3.  Specify the amount of memory to be allocated:
+5.  Specify the amount of memory to be allocated:
 
    ``` bash
-
     $ docker run \
+        -p 8080:8080 \
         --env ERDDAP_MIN_MEMORY=4G --env ERDDAP_MAX_MEMORY=8G
         ... \
         axiom/docker-erddap
