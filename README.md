@@ -112,6 +112,8 @@ Any number of these options can be taken to configure your ERDDAP container inst
         axiom/docker-erddap
     ```
 
+    **Depending on your container environment, it may pass in it's own environment variables relating to your resources. Potentially there could be a collision with the `ERDDAP_*` config variables if any of your resources start with ERDDAP.**
+
 3. Configure using a shell script
 
     You can mount a file called `config.sh` to `${CATALINA_HOME}/bin/config.sh` that sets any ERDDAP configuration environmental variables you want to use. This is sourced in the container-provided `setenv.sh` file and and all variables will be exported to be used by ERDDAP for configuration. These will take precedence over environmental variable specified when running the container (see above).
