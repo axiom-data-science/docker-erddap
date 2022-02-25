@@ -4,7 +4,7 @@ LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 ENV ERDDAP_VERSION 2.14
 ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
-ENV ERDDAP_DATA /erddapData
+ENV ERDDAP_bigParentDirectory /erddapData
 
 RUN \
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
@@ -15,13 +15,33 @@ RUN \
     rm /erddap.war && \
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    mkdir -p ${ERDDAP_DATA}
+    mkdir -p ${ERDDAP_bigParentDirectory}
 
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
-# ERDDAP setup.xml
-COPY files/setup.xml ${CATALINA_HOME}/content/erddap/setup.xml
+# Default configuration
+ENV ERDDAP_baseHttpsUrl="https://localhost:8443" \
+    ERDDAP_flagKeyKey="73976bb0-9cd4-11e3-a5e2-0800200c9a66" \
+    ERDDAP_emailEverythingTo="nobody@example.com" \
+    ERDDAP_emailDailyReportsTo="nobody@example.com" \
+    ERDDAP_emailFromAddress="nothing@example.com" \
+    ERDDAP_emailUserName="" \
+    ERDDAP_emailPassword="" \
+    ERDDAP_emailProperties="" \
+    ERDDAP_emailSmtpHost="" \
+    ERDDAP_emailSmtpPort="" \
+    ERDDAP_adminInstitution="Axiom Docker Install" \
+    ERDDAP_adminInstitutionUrl="https://github.com/axiom-data-science/docker-erddap" \
+    ERDDAP_adminIndividualName="Axiom Docker Install" \
+    ERDDAP_adminPosition="Software Engineer" \
+    ERDDAP_adminPhone="555-555-5555" \
+    ERDDAP_adminAddress="123 Irrelevant St." \
+    ERDDAP_adminCity="Nowhere" \
+    ERDDAP_adminStateOrProvince="AK" \
+    ERDDAP_adminPostalCode="99504" \
+    ERDDAP_adminCountry="USA" \
+    ERDDAP_adminEmail="nobody@example.com"
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
