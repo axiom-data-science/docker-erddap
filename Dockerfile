@@ -1,7 +1,7 @@
-FROM unidata/tomcat-docker:8.5@sha256:3cf99db8113eeea94a5f27dfa50f843a94ab7eaad373fd92e071e3afd912d44b
+FROM unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
-ENV ERDDAP_VERSION 2.14
+ENV ERDDAP_VERSION 2.18
 ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_bigParentDirectory /erddapData
