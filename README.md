@@ -82,7 +82,7 @@ Any number of these options can be taken to configure your ERDDAP container inst
 
     You can set environmental variables to configure ERDDAP's `setup.xml` since version 2.14. See the [ERDDAP documentation](https://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setupEnvironmentVariables) for details. This can be very useful so you don't need to mount a custom `setup.xml` file into your container. If taking this approach you should look into setting the following ERDDAP config options:
 
-    * `ERDDAP_baseURL`
+    * `ERDDAP_baseUrl`
     * `ERDDAP_baseHttpsUrl`
     * `ERDDAP_flagKeyKey`
     * `ERDDAP_emailEverythingTo`
