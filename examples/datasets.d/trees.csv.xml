@@ -1,0 +1,70 @@
+<dataset type="EDDTableFromAsciiFiles" datasetID="trees" active="true">
+  <reloadEveryNMinutes>10080</reloadEveryNMinutes>
+  <updateEveryNMillis>10000</updateEveryNMillis>
+  <fileDir>/data/</fileDir>
+  <fileNameRegex>trees.csv</fileNameRegex>
+  <recursive>false</recursive>
+  <pathRegex></pathRegex>
+  <metadataFrom>last</metadataFrom>
+  <standardizeWhat>0</standardizeWhat>
+  <charset>ISO-8859-1</charset>
+  <columnSeparator/>
+  <columnNamesRow>1</columnNamesRow>
+  <firstDataRow>2</firstDataRow>
+  <sortedColumnSourceName/>
+  <sortFilesBySourceNames/>
+  <fileTableInMemory>false</fileTableInMemory>
+  <addAttributes>
+    <att name="cdm_data_type">Other</att>
+    <att name="Conventions">COARDS, CF-1.6, ACDD-1.3</att>
+    <att name="infoUrl">https://people.sc.fsu.edu/~jburkardt/data/csv/trees.csv</att>
+    <att name="institution">???</att>
+    <att name="keywords">tree, data, ft^3, girth, height, index, local, source, volume, Volume_ft_3</att>
+    <att name="license">[standard]</att>
+    <att name="sourceUrl">(local files)</att>
+    <att name="standard_name_vocabulary">CF Standard Name Table v70</att>
+    <att name="summary">Generated dataset for trees.csv</att>
+    <att name="title">trees.csv</att>
+  </addAttributes>
+  <dataVariable>
+    <sourceName>Index</sourceName>
+    <destinationName>Index</destinationName>
+    <dataType>byte</dataType>
+    <addAttributes>
+      <att name="_FillValue" type="byte">127</att>
+      <att name="ioos_category">Unknown</att>
+      <att name="long_name">Index</att>
+    </addAttributes>
+  </dataVariable>
+  <dataVariable>
+    <sourceName>Girth (in)</sourceName>
+    <destinationName>Girth</destinationName>
+    <dataType>float</dataType>
+    <addAttributes>
+      <att name="ioos_category">Unknown</att>
+      <att name="long_name">Girth (in)</att>
+      <att name="units">in</att>
+    </addAttributes>
+  </dataVariable>
+  <dataVariable>
+    <sourceName>Height (ft)</sourceName>
+    <destinationName>Height</destinationName>
+    <dataType>byte</dataType>
+    <addAttributes>
+      <att name="_FillValue" type="byte">127</att>
+      <att name="ioos_category">Unknown</att>
+      <att name="long_name">Height (ft)</att>
+      <att name="units">ft</att>
+    </addAttributes>
+  </dataVariable>
+  <dataVariable>
+    <sourceName>Volume(ft^3)</sourceName>
+    <destinationName>Volume</destinationName>
+    <dataType>float</dataType>
+    <addAttributes>
+      <att name="ioos_category">Unknown</att>
+      <att name="long_name">Volume(ft^3)</att>
+      <att name="units">ft^3</att>
+    </addAttributes>
+  </dataVariable>
+</dataset>

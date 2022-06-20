@@ -6,6 +6,9 @@ ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$E
 ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_bigParentDirectory /erddapData
 
+RUN apt-get update && apt-get install -y xmlstarlet \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN \
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
     unzip /erddapContent.zip -d ${CATALINA_HOME} && \
@@ -14,7 +17,7 @@ RUN \
     unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
     rm /erddap.war && \
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    rm -rf /tmp/* /var/tmp/* && \
     mkdir -p ${ERDDAP_bigParentDirectory}
 
 # Java options
