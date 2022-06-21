@@ -46,7 +46,7 @@ ENV ERDDAP_baseHttpsUrl="https://localhost:8443" \
     ERDDAP_adminCountry="USA" \
     ERDDAP_adminEmail="nobody@example.com"
 
-COPY entrypoint.sh /
+COPY entrypoint.sh datasets.d.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 8080

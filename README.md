@@ -234,3 +234,12 @@ through `ERDDAP_DATASETS_* env vars.
 
 For an example of running with `datasets.d` mode, see the docker-compose
 example in [examples](./examples).
+
+Generation of `datasets.xml` is handled in a script (`datasets.d.sh`)  which prints
+to stdout and can be tested outside of `docker-erddap` initialization.
+
+Example:
+
+```
+ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
+```

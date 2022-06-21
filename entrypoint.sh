@@ -29,9 +29,10 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
     ###
     # Add datasets in /datasets.d to datasets.xml
     ###
-    ERDDAP_CONTENT_DIR="/usr/local/tomcat/content/erddap"
-    DATASETS_XML="${ERDDAP_CONTENT_DIR}/datasets.xml"
     if [ -d "/datasets.d" ]; then
+      echo "Creating datasets.xml from /datasets.d"
+      ERDDAP_CONTENT_DIR="/usr/local/tomcat/content/erddap"
+      DATASETS_XML="${ERDDAP_CONTENT_DIR}/datasets.xml"
       if [ -f "$DATASETS_XML" ]; then
         #datasets.xml exists, make sure we have a backup of it
         DATASETS_XML_MD5SUM=$(md5sum "$DATASETS_XML" | awk '{print $1}')
@@ -42,19 +43,7 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
           cp "$DATASETS_XML" "${DATASETS_XML_BACKUP}"
         fi
       fi
-      echo "Creating ""$DATASETS_XML"" from /datasets.d"
-      echo "<erddapDatasets>$(find /datasets.d -name '*.xml' -type f -print0 | sort -z | xargs -0 cat)</erddapDatasets>" \
-        > "${DATASETS_XML}"
-
-      #set top level datasets.xml config with ERDDAP_DATASETS_* env vars
-      env | grep -oP '(?<=^ERDDAP_DATASETS_).*' | while read -r e; do
-        k=$(echo "$e" | cut -d= -f1);
-        v=$(echo "$e" | cut -d= -f2-);
-        xmlstarlet edit --inplace --subnode /erddapDatasets --type elem --name "$k" --value "$v" "${DATASETS_XML}"
-      done
-
-      #empty edit for formatting
-      xmlstarlet edit --inplace "${DATASETS_XML}"
+      /datasets.d.sh > "$DATASETS_XML"
     fi
 
     exec gosu tomcat "$@"
