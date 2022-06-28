@@ -37,10 +37,17 @@ $ docker run -d -p 8080:8080 axiom/docker-erddap
 ```bash
 $ docker run --rm -it \
   -v $(pwd)/logs:/erddapData/logs \
+  --workdir /usr/local/tomcat/webapps/erddap/WEB-INF \
   axiom/docker-erddap:latest \
-  bash -c "cd webapps/erddap/WEB-INF/ && bash GenerateDatasetsXml.sh -verbose"
+  bash GenerateDatasetsXml.sh -verbose
 ```
 
+or, generate a basic dataset configuration without input for
+later customization
+
+```bash
+./make-dataset.xml /path/to/your.csv EDDTableFromAsciiFiles > /path/to/your-dataset.xml
+```
 
 ## Configuration
 
@@ -189,3 +196,50 @@ Any number of these options can be taken to configure your ERDDAP container inst
 
    Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
 
+#### datasets.d mode - EXPERIMENTAL
+
+Typically ERDDAP is configured with a single `datasets.xml` configuration file
+describing all datasets to be served by ERDDAP, plus some global configuration options.
+This file is [described in detail in the official ERDDAP documentation](https://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html).
+
+`docker-erddap` provides an alternative `datasets.d` mode, where `datasets.xml`
+`dataset` elements can be stored in separate files inside a `datasets.d` directory.
+At startup time, the `/datasets.d` directory is scanned for any files ending in `.xml`,
+and matching files are concatenated (sorted by file path inside `/datasets.d`) into a
+generated `datasets.xml` file (specifically, an empty `<erddapDatasets />` element).
+
+In this mode, top level `datasets.xml` elements like `<cacheMinutes>`,
+`<standardLicense>`, etc can be configured using `ERDDAP_DATASET_*`
+environment variables. These behave much like the `ERDDAP_*` environment
+variables which affect `setup.xml` values (see the
+[ERDDAP docs](https://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setupEnvironmentVariables)
+for more details), but affect top level `datasets.xml` values instead. For example, to set
+the `standardLicense`:
+
+```bash
+docker run -d -v $(pwd)/datasets.d:/datasets.d:ro \
+  -e ERDDAP_DATASETS_standardLicense="<h1>Use as you wish</h1>" \
+  --name erddap
+  axiom/docker-erddap
+```
+
+Note that in this mode, the `datasets.xml` file in the ERDDAP content directory
+(`/usr/local/tomcat/content/erddap`) is replaced by the generated `datasets.xml`.
+A backup of the original `datasets.xml` is created if one doesn't already exist.
+
+Consequently, when using `datasets.d` mode it is not necessary to mount the
+ERDDAP content directory at all. The contents of `datasets.d` provide all of the
+dataset configuration, and any top level `datasets.xml` configuration is performed
+through `ERDDAP_DATASETS_* env vars.
+
+For an example of running with `datasets.d` mode, see the docker-compose
+example in [examples](./examples).
+
+Generation of `datasets.xml` is handled in a script (`datasets.d.sh`)  which prints
+to stdout and can be tested outside of `docker-erddap` initialization.
+
+Example:
+
+```
+ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
+```

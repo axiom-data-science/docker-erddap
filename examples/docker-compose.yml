@@ -1,0 +1,24 @@
+services:
+  erddap:
+    build: ..
+    ports:
+      - "${ERDDAP_HTTP_PORT:-8888}:8080"
+    environment:
+      ERDDAP_baseUrl: "${ERDDAP_BASE_URL:-http://localhost:8888}"
+      ERDDAP_DATASETS_standardPrivacyPolicy: "<h1>Any and all usage of this data is permitted.</h1>"
+    volumes:
+      - ./data:/data:ro
+      - ./datasets.d:/datasets.d:ro
+      - ./erddapData:/erddapData
+    #healthcheck to check ERDDAP landing page. the check provides the added bonus
+    #of triggering ERDDAP initialization before the first user visit
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/erddap/index.html"]
+      interval: 10s
+  erddap-logs:
+    build: ..
+    volumes:
+      - ./erddapData:/erddapData:ro
+    command: tail -F /erddapData/logs/log.txt
+    depends_on:
+      - erddap

@@ -9,7 +9,7 @@ fi
 
 ERDDAP_CONFIG=$(env | grep --regexp "^ERDDAP_.*$" | sort)
 if [ -n "$ERDDAP_CONFIG" ]; then
-    echo "ERDDAP configured with: $ERDDAP_CONFIG"
+    echo -e "ERDDAP configured with:\n$ERDDAP_CONFIG"
 fi
 
 # JAVA_OPTS
