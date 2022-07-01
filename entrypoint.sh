@@ -13,8 +13,8 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
     ###
     # Tomcat user
     ###
-    getent group tomcat | groupadd -r tomcat -g ${GROUP_ID} && \
-    id -u ${USER_ID} &> /dev/null || useradd -u ${USER_ID} -g tomcat \
+    groupadd -r tomcat -g ${GROUP_ID} && \
+    useradd -u ${USER_ID} -g tomcat \
         -d ${CATALINA_HOME} -s /sbin/nologin -c "Tomcat user" tomcat
 
     ###
