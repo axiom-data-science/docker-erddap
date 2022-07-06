@@ -1,4 +1,5 @@
-FROM unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9
+ARG BASE_IMAGE=unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9
+FROM ${BASE_IMAGE}
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
 ENV ERDDAP_VERSION 2.18
