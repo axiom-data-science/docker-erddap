@@ -1,9 +1,11 @@
 name: Push
 
 on:
-  push:
   workflow_dispatch:
   pull_request:
+  push:
+    branches:
+      - main
   release:
     types: [published]
 env:
@@ -35,8 +37,8 @@ jobs:
         images: |
           axiom/docker-erddap
         tags: |
-          type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ matrix.tag }},prefix=latest-
+          type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' && github.event_name == 'release' && github.event.action == 'published' }}
           type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
@@ -84,7 +86,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     needs: build
-    if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
+    if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
 
     strategy:
       matrix:
@@ -105,8 +107,8 @@ jobs:
         images: |
           axiom/docker-erddap
         tags: |
-          type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ matrix.tag }},prefix=latest-
+          type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' && github.event_name == 'release' && github.event.action == 'published' }}
           type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
@@ -127,7 +129,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Push latest image to Docker Hub if on master or main branch of Axiom's repo
+    - name: Push to Docker Hub
       uses: docker/build-push-action@v2
       with:
         push: true
