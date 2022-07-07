@@ -1,6 +1,11 @@
 name: Push
 
-on: [push, workflow_dispatch, pull_request]
+on:
+  push:
+  workflow_dispatch:
+  pull_request:
+  release:
+    types: [published]
 env:
   BUILDX_CACHE: /tmp/.buildx-cache
   CACHE_KEY: docker-erddap-buildx-
@@ -14,10 +19,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - base: "unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9"
-            tag: "jdk8-openjdk"
-          - base: "unidata/tomcat-docker:8.5-jdk11-openjdk@sha256:1100d1ba623d66313e43acf921879dd7df1fc7aadb19bc1b273af4e4ab31a032"
-            tag: "jdk11-openjdk"
+          - tag: "jdk8-openjdk"
+            base: "unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9"
+          - tag: "jdk11-openjdk"
+            base: "unidata/tomcat-docker:8.5-jdk11-openjdk@sha256:1100d1ba623d66313e43acf921879dd7df1fc7aadb19bc1b273af4e4ab31a032"
 
     steps:
     - name: Checkout
@@ -32,6 +37,8 @@ jobs:
         tags: |
           type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ matrix.tag }},prefix=latest-
+          type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' && github.event_name == 'release' && github.event.action == 'published' }}
+          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -77,15 +84,15 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
     needs: build
-    if: (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
+    if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
 
     strategy:
       matrix:
         include:
-          - base: "unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9"
-            tag: "jdk8-openjdk"
-          - base: "unidata/tomcat-docker:8.5-jdk11-openjdk@sha256:1100d1ba623d66313e43acf921879dd7df1fc7aadb19bc1b273af4e4ab31a032"
-            tag: "jdk11-openjdk"
+          - tag: "jdk8-openjdk"
+            base: "unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261fb6e6428cb906aa4ce7509301a2216f9"
+          - tag: "jdk11-openjdk"
+            base: "unidata/tomcat-docker:8.5-jdk11-openjdk@sha256:1100d1ba623d66313e43acf921879dd7df1fc7aadb19bc1b273af4e4ab31a032"
 
     steps:
     - name: Checkout
@@ -100,6 +107,8 @@ jobs:
         tags: |
           type=raw,value=latest,enable=${{ matrix.tag == 'jdk8-openjdk' }}
           type=raw,value=${{ matrix.tag }},prefix=latest-
+          type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' && github.event_name == 'release' && github.event.action == 'published' }}
+          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
