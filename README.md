@@ -243,3 +243,25 @@ Example:
 ```
 ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
 ```
+
+#### Initialization scripts (/init.d) - EXPERIMENTAL
+
+Additional configuration can be performed by placing executable files and/or
+shell scripts in `/init.d`. These executables will be run on every container
+start up, so they __must be idempotent__. This functionality is inspired by
+the postgres Docker image's
+[`/docker-entrypoint-initdb.d`](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts).
+
+Example:
+
+```
+#remove .hdf and .nc files from range request exclusion
+mkdir -p init.d
+cat << 'EOF' > init.d/10-remove-hdf-nc-range-request-exclusion.sh
+sed -i 's/.hdf, .nc, //g' ${CATALINA_HOME}/webapps/erddap/WEB-INF/classes/gov/noaa/pfel/erddap/util/messages.xml
+EOF
+
+chmod +x init.d/10-remove-hdf-nc-range-request-exclusion.sh
+
+docker run -d -p 8080:8080 -v $(pwd)/init.d:/init.d:ro --name erddap axiom/docker-erddap
+```
