@@ -34,7 +34,7 @@ jobs:
           axiom/docker-erddap
         tags: |
           type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' }}
-          type=raw,value=${{ github.event.release.tag_name }},suffix=${{ matrix.tag }}
+          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -102,7 +102,7 @@ jobs:
           axiom/docker-erddap
         tags: |
           type=raw,value=${{ github.event.release.tag_name }},enable=${{ matrix.tag == 'jdk8-openjdk' }}
-          type=raw,value=${{ github.event.release.tag_name }},suffix=${{ matrix.tag }}
+          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
