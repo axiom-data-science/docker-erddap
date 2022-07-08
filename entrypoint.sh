@@ -46,6 +46,24 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
       /datasets.d.sh > "$DATASETS_XML"
     fi
 
+    ###
+    # Run executables/shell scripts in /init.d on each container startup
+    # Inspired by postgres' /docker-entrypoint-initdb.d
+    # https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts
+    # https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh#L156
+    ###
+    if [ -d "/init.d" ]; then
+      for f in /init.d/*; do
+        if [ -x "$f" ]; then
+          echo "Executing $f"
+          "$f"
+        elif [[ $f == *.sh ]]; then
+          echo "Sourcing $f (not executable)"
+          . "$f"
+        fi
+      done
+    fi
+
     exec gosu tomcat "$@"
 fi
 
