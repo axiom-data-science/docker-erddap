@@ -281,7 +281,8 @@ experience when using this docker image you can run a sidecar `rsyslog` containe
 For an example of running with a sidecar `rsyslog` container, see the docker-compose
 example in [examples](./examples). The supporting `rsyslog` configuration files are located in
 [rsyslog](./examples/rsyslog). Please note that this requires both the ERDDAP `bigParentDirectory`
-and Tomcat's log directory to be bind mounted to the host from the ERDDAP container.
+and Tomcat's log directory to be bind mounted to the host from the ERDDAP container
+or managed in Docker named volumes mounted to both the ERDDAP and rsyslog containers.
 
 Example consolidated log:
 
