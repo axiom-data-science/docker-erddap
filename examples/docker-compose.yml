@@ -21,7 +21,7 @@ services:
     volumes:
       - ./erddapData:/erddapData:ro
       - ./tomcatLogs:/usr/local/tomcat/logs:ro
-      - ./rsyslogd/rsyslog.conf:/etc/rsyslog.conf:ro
-      - ./rsyslogd/conf:/etc/rsyslog.d:ro
+      - ./rsyslog/rsyslog.conf:/etc/rsyslog.conf:ro
+      - ./rsyslog/rsyslog.d:/etc/rsyslog.d:ro
     depends_on:
       - erddap
