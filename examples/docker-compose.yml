@@ -10,15 +10,18 @@ services:
       - ./data:/data:ro
       - ./datasets.d:/datasets.d:ro
       - ./erddapData:/erddapData
+      - ./tomcatLogs:/usr/local/tomcat/logs
     #healthcheck to check ERDDAP landing page. the check provides the added bonus
     #of triggering ERDDAP initialization before the first user visit
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/erddap/index.html"]
       interval: 10s
   erddap-logs:
-    build: ..
+    image: gynter/rsyslog-relp:alpine
     volumes:
       - ./erddapData:/erddapData:ro
-    command: tail -F /erddapData/logs/log.txt
+      - ./tomcatLogs:/usr/local/tomcat/logs:ro
+      - ./rsyslog/rsyslog.conf:/etc/rsyslog.conf:ro
+      - ./rsyslog/rsyslog.d:/etc/rsyslog.d:ro
     depends_on:
       - erddap

@@ -240,7 +240,7 @@ to stdout and can be tested outside of `docker-erddap` initialization.
 
 Example:
 
-```
+```shell
 ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
 ```
 
@@ -254,7 +254,7 @@ the postgres Docker image's
 
 Example:
 
-```
+```shell
 #remove .hdf and .nc files from range request exclusion
 mkdir -p init.d
 cat << 'EOF' > init.d/10-remove-hdf-nc-range-request-exclusion.sh
@@ -264,4 +264,37 @@ EOF
 chmod +x init.d/10-remove-hdf-nc-range-request-exclusion.sh
 
 docker run -d -p 8080:8080 -v $(pwd)/init.d:/init.d:ro --name erddap axiom/docker-erddap
+```
+
+#### Log Consolidation - EXPERIMENTAL
+
+ERDDAP writes logs to a `logs/log.txt` file relative to ERDDAP's `bigParentDirectory`.
+The log format doesn't adhere to a standard logging format and isn't easily parsable. The logs also
+don't provide timestamps for when the logs messages were written. To enhance the logging
+experience when using this docker image you can run a sidecar `rsyslog` container that will:
+
+* Consolidate the log files from ERDDAP and Tomcat (both application and access)
+* Add a timestamp to the ERDDAP logs
+* Filter out some ERDDAP log "noise" (opinionated)
+* Send the consolidated and filtered log messages to `stdout`
+
+For an example of running with a sidecar `rsyslog` container, see the docker-compose
+example in [examples](./examples). The supporting `rsyslog` configuration files are located in
+[rsyslog](./examples/rsyslog). Please note that this requires both the ERDDAP `bigParentDirectory`
+and Tomcat's log directory to be bind mounted to the host from the ERDDAP container
+or managed in Docker named volumes mounted to both the ERDDAP and rsyslog containers.
+
+Example consolidated log:
+
+```
+erddap-rsyslogd_1  | [TOMCAT] 08-Jul-2022 04:44:14.004 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+erddap-rsyslogd_1  | [TOMCAT] 08-Jul-2022 04:44:14.011 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 3582 ms
+...
+erddap-rsyslogd_1  | [ERDDAP] 2022-07-08T04:44:19Z Major LoadDatasets Time Series: MLD    Datasets Loaded            Requests (median times in ms)              Number of Threads      MB    Open
+erddap-rsyslogd_1  |   timestamp                    time   nTry nFail nTotal  nSuccess (median) nFail (median) memFail tooMany  tomWait inotify other  inUse  Files
+erddap-rsyslogd_1  | ----------------------------  -----   -----------------  ------------------------------------------------  ---------------------  -----  -----
+erddap-rsyslogd_1  |   2022-07-08T04:44:18+00:00      1s      1     0      2         1 (     8)     0 (     0)       0       0       10       1    17     44     0%
+...
+erddap-rsyslogd_1  | [ACCESS] 127.0.0.1 - - [08/Jul/2022:04:44:17 +0000] "GET /erddap/index.html HTTP/1.1" 200 25268
+erddap-rsyslogd_1  | [ACCESS] 127.0.0.1 - - [08/Jul/2022:04:44:27 +0000] "GET /erddap/index.html HTTP/1.1" 200 25268
 ```
