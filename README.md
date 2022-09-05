@@ -55,6 +55,12 @@ later customization
 
 See [these instructions for configuring Tomcat](https://github.com/unidata/tomcat-docker) from the Tomcat image this is built from (`unidata/tomcat-docker`).
 
+### CORS
+
+The [Tomcat Docker image](https://github.com/unidata/tomcat-docker) used by this image enables the
+[Apache Tomcat CORS filter](https://tomcat.apache.org/tomcat-8.5-doc/config/filter.html#CORS_Filter) by
+default. To disable it (maybe you want to handle CORS uniformly in a proxying webserver?), set environment
+variable `DISABLE_CORS` to `1`.
 
 ### ERDDAP
 

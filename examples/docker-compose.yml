@@ -6,6 +6,7 @@ services:
     environment:
       ERDDAP_baseUrl: "${ERDDAP_BASE_URL:-http://localhost:8888}"
       ERDDAP_DATASETS_standardPrivacyPolicy: "<h1>Any and all usage of this data is permitted.</h1>"
+      DISABLE_CORS: "1"
     volumes:
       - ./data:/data:ro
       - ./datasets.d:/datasets.d:ro

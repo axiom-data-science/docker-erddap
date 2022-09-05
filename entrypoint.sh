@@ -27,6 +27,16 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
     sync
 
     ###
+    # Deactivate CORS filter in web.xml if DISABLE_CORS=1
+    # Useful if CORS is handled outside of Tomcat (e.g. in a proxying webserver like nginx)
+    ###
+    if [ "$DISABLE_CORS" == "1" ]; then
+      echo "Deactivating Tomcat CORS filter"
+      xmlstarlet edit --inplace --delete '//_:filter[./_:filter-name = "CorsFilter"]' \
+        --delete '//_:filter-mapping[./_:filter-name = "CorsFilter"]' "${CATALINA_HOME}/conf/web.xml"
+    fi
+
+    ###
     # Add datasets in /datasets.d to datasets.xml
     ###
     if [ -d "/datasets.d" ]; then
