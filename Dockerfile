@@ -2,14 +2,16 @@ ARG BASE_IMAGE=unidata/tomcat-docker:8.5@sha256:0d65eef935da7bc00242360269070261
 FROM ${BASE_IMAGE}
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
-ENV ERDDAP_VERSION 2.18
-ENV ERDDAP_CONTENT_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
-ENV ERDDAP_WAR_URL https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
+ARG ERDDAP_VERSION=2.18
+ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
+ARG ERDDAP_WAR_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_bigParentDirectory /erddapData
 
-RUN apt-get update && apt-get install -y xmlstarlet \
+RUN apt-get update && apt-get install -y unzip xmlstarlet \
+    && if ! command -v gosu &> /dev/null; then apt-get install -y gosu; fi \
     && rm -rf /var/lib/apt/lists/*
 
+ARG BUST_CACHE=1
 RUN \
     curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
     unzip /erddapContent.zip -d ${CATALINA_HOME} && \
