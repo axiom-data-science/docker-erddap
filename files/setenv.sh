@@ -15,8 +15,16 @@ fi
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed '/^1\./s///' | cut -d'.' -f1)
 
 # JAVA_OPTS
-MEMORY="${ERDDAP_MEMORY:-4G}"
-NORMAL="-server -Xms${ERDDAP_MIN_MEMORY:-${MEMORY}} -Xmx${ERDDAP_MAX_MEMORY:-${MEMORY}}"
+NORMAL="-server"
+
+# Memory
+if [ -n "$ERDDAP_MAX_RAM_PERCENTAGE" ]; then
+  JVM_MEMORY_ARGS="-XX:MaxRAMPercentage=${ERDDAP_MAX_RAM_PERCENTAGE}"
+else
+  ERDDAP_MEMORY="${ERDDAP_MEMORY:-4G}"
+  JVM_MEMORY_ARGS="-Xms${ERDDAP_MIN_MEMORY:-${ERDDAP_MEMORY}} -Xmx${ERDDAP_MAX_MEMORY:-${ERDDAP_MEMORY}}"
+fi
+
 HEAP_DUMP="-XX:+HeapDumpOnOutOfMemoryError"
 HEADLESS="-Djava.awt.headless=true"
 
@@ -30,5 +38,5 @@ CONTENT_ROOT="-DerddapContentDirectory=$CATALINA_HOME/content/erddap"
 JNA_DIR="-Djna.tmpdir=/tmp/"
 FASTBOOT="-Djava.security.egd=file:/dev/./urandom"
 
-JAVA_OPTS="$JAVA_OPTS $NORMAL $HEAP_DUMP $HEADLESS $EXTRAS $CONTENT_ROOT/ $JNA_DIR $FASTBOOT"
+JAVA_OPTS="$JAVA_OPTS $NORMAL $JVM_MEMORY_ARGS $HEAP_DUMP $HEADLESS $EXTRAS $CONTENT_ROOT/ $JNA_DIR $FASTBOOT"
 echo "ERDDAP Running with: $JAVA_OPTS"
