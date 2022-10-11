@@ -26,6 +26,10 @@ RUN \
 # Java options
 COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
 
+# server.xml fixup
+COPY update-server-xml.sh /opt/update-server-xml.sh
+RUN /opt/update-server-xml.sh
+
 # Default configuration
 ENV ERDDAP_baseHttpsUrl="https://localhost:8443" \
     ERDDAP_flagKeyKey="73976bb0-9cd4-11e3-a5e2-0800200c9a66" \
