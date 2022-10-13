@@ -202,6 +202,20 @@ Any number of these options can be taken to configure your ERDDAP container inst
 
    Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
 
+   Alternatively, you can set `ERDDAP_MAX_RAM_PERCENTAGE` set the maximum Java heap size to a percentage of the memory
+   available to the container. This option sets the JVM option ` -XX:MaxRAMPercentage`.
+   For example, to limit the container's memory to 10GB and allow the Java heap size to
+   use 90% of that amount:
+
+   ``` bash
+    $ docker run \
+        -p 8080:8080 \
+        --memory 10g \
+        --env ERDDAP_MAX_RAM_PERCENTAGE=90 \
+        ... \
+        axiom/docker-erddap
+   ```
+
 #### datasets.d mode - EXPERIMENTAL
 
 Typically ERDDAP is configured with a single `datasets.xml` configuration file
