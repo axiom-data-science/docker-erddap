@@ -2,7 +2,7 @@ ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410
 FROM ${BASE_IMAGE}
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
-ARG ERDDAP_VERSION=2.18
+ARG ERDDAP_VERSION=2.22
 ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ARG ERDDAP_WAR_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_bigParentDirectory /erddapData
