@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - tag: "10.1.0-jdk17-openjdk"
+          - tag: "jdk17-openjdk"
             base: "unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839"
 
     steps:
@@ -87,7 +87,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - tag: "10.1.0-jdk17-openjdk"
+          - tag: "jdk17-openjdk"
             base: "unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839"
 
     steps:
