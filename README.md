@@ -2,40 +2,31 @@
 
 A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html)
 
-Available versions:
+Most recent versions:
 
-* `axiom/docker-erddap:latest`
-* `axiom/docker-erddap:2.18`
-* `axiom/docker-erddap:2.14`
-* `axiom/docker-erddap:2.11`
-* `axiom/docker-erddap:2.10`
-* `axiom/docker-erddap:2.02`
-* `axiom/docker-erddap:1.82`
-* `axiom/docker-erddap:1.80`
+* `axiom/docker-erddap:latest-jdk17-openjdk` (2.22)
+* `axiom/docker-erddap:2.22-jdk17-openjdk`
 
 See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your sever.
 
-The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodically. Even for release tags.
-This repository will **not** back-port changes from the upstream image to existing tags and overwrite them. If you require features from a newer upstream image
-(for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image.
-You can also build this image yourself.
+The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodically. Even for release tags. This repository will **not** back-port changes from the upstream image to existing tags and overwrite them. If you require features from a newer upstream image (for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image. You can also build this image yourself.
 
-Use `latest` image with caution as it follows the upstream image, and is not as thoroughly tested as tagged images.
+Use any of the `latest-*` images with caution as they follow the upstream image, and is not as thoroughly tested as tagged images.
 
 [Dependabot](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically) is used to automatically make PRs to update the upstream image ([`.github/dependabot.yml`](.github/dependabot.yml)).
 
 ## Quickstart
 
 ```bash
-$ docker run -d -p 8080:8080 axiom/docker-erddap
+docker run -d -p 8080:8080 axiom/docker-erddap:latest-jdk17-openjdk
 ```
 
 ## Running ERDDAP CLI Tools
 
-**GenerateDatasetsXml**
+### GenerateDatasetsXml
 
 ```bash
-$ docker run --rm -it \
+docker run --rm -it \
   -v $(pwd)/logs:/erddapData/logs \
   --workdir /usr/local/tomcat/webapps/erddap/WEB-INF \
   axiom/docker-erddap:latest \
@@ -66,10 +57,10 @@ variable `DISABLE_CORS` to `1`.
 
 Any number of these options can be taken to configure your ERDDAP container instance to your liking.
 
-1.  Mount your own `content/erddap` directory:
+1. Mount your own `content/erddap` directory:
 
     ```bash
-    $ docker run \
+    docker run \
         -p 8080:8080 \
         -v /path/to/your/erddap/directory:/usr/local/tomcat/content/erddap \
         ... \
@@ -177,10 +168,10 @@ Any number of these options can be taken to configure your ERDDAP container inst
     ERDDAP_adminEmail="nobody@example.com"
     ```
 
-4.  Mount your own `bigParentDirectory`:
+4. Mount your own `bigParentDirectory`:
 
     ```bash
-    $ docker run \
+    docker run \
         -p 8080:8080 \
         -v /path/to/your/erddap/bigParentDirectory:/erddapData \
         ... \
@@ -189,52 +180,36 @@ Any number of these options can be taken to configure your ERDDAP container inst
 
     This is **highly** recommended, or nothing will persist across container restarts (logs/cache/etc.)
 
+5. Specify the amount of memory to be allocated:
 
-5.  Specify the amount of memory to be allocated:
-
-   ``` bash
-    $ docker run \
+    ``` bash
+    docker run \
         -p 8080:8080 \
         --env ERDDAP_MIN_MEMORY=4G --env ERDDAP_MAX_MEMORY=8G
         ... \
         axiom/docker-erddap
-   ```
+    ```
 
-   Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
+    Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
 
-   Alternatively, you can set `ERDDAP_MAX_RAM_PERCENTAGE` set the maximum Java heap size to a percentage of the memory
-   available to the container. This option sets the JVM option ` -XX:MaxRAMPercentage`.
-   For example, to limit the container's memory to 10GB and allow the Java heap size to
-   use 90% of that amount:
+    Alternatively, you can set `ERDDAP_MAX_RAM_PERCENTAGE` set the maximum Java heap size to a percentage of the memory available to the container. This option sets the JVM option `-XX:MaxRAMPercentage`. For example, to limit the container's memory to 10GB and allow the Java heap size to use 90% of that amount:
 
-   ``` bash
-    $ docker run \
+    ``` bash
+    docker run \
         -p 8080:8080 \
         --memory 10g \
         --env ERDDAP_MAX_RAM_PERCENTAGE=90 \
         ... \
         axiom/docker-erddap
-   ```
+    ```
 
 #### datasets.d mode - EXPERIMENTAL
 
-Typically ERDDAP is configured with a single `datasets.xml` configuration file
-describing all datasets to be served by ERDDAP, plus some global configuration options.
-This file is [described in detail in the official ERDDAP documentation](https://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html).
+Typically ERDDAP is configured with a single `datasets.xml` configuration file describing all datasets to be served by ERDDAP, plus some global configuration options. This file is [described in detail in the official ERDDAP documentation](https://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html).
 
-`docker-erddap` provides an alternative `datasets.d` mode, where `datasets.xml`
-`dataset` elements can be stored in separate files inside a `datasets.d` directory.
-At startup time, the `/datasets.d` directory is scanned for any files ending in `.xml`,
-and matching files are concatenated (sorted by file path inside `/datasets.d`) into a
-generated `datasets.xml` file (specifically, an empty `<erddapDatasets />` element).
+`docker-erddap` provides an alternative `datasets.d` mode, where `datasets.xml` `dataset` elements can be stored in separate files inside a `datasets.d` directory. At startup time, the `/datasets.d` directory is scanned for any files ending in `.xml`, and matching files are concatenated (sorted by file path inside `/datasets.d`) into a generated `datasets.xml` file (specifically, an empty `<erddapDatasets />` element).
 
-In this mode, top level `datasets.xml` elements like `<cacheMinutes>`,
-`<standardLicense>`, etc can be configured using `ERDDAP_DATASET_*`
-environment variables. These behave much like the `ERDDAP_*` environment
-variables which affect `setup.xml` values (see the
-[ERDDAP docs](https://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setupEnvironmentVariables)
-for more details), but affect top level `datasets.xml` values instead. For example, to set
-the `standardLicense`:
+In this mode, top level `datasets.xml` elements like `<cacheMinutes>`, `<standardLicense>`, etc can be configured using `ERDDAP_DATASET_*` environment variables. These behave much like the `ERDDAP_*` environment variables which affect `setup.xml` values (see the [ERDDAP docs](https://coastwatch.pfeg.noaa.gov/erddap/download/setup.html#setupEnvironmentVariables) for more details), but affect top level `datasets.xml` values instead. For example, to set the `standardLicense`:
 
 ```bash
 docker run -d -v $(pwd)/datasets.d:/datasets.d:ro \
@@ -243,20 +218,13 @@ docker run -d -v $(pwd)/datasets.d:/datasets.d:ro \
   axiom/docker-erddap
 ```
 
-Note that in this mode, the `datasets.xml` file in the ERDDAP content directory
-(`/usr/local/tomcat/content/erddap`) is replaced by the generated `datasets.xml`.
-A backup of the original `datasets.xml` is created if one doesn't already exist.
+Note that in this mode, the `datasets.xml` file in the ERDDAP content directory (`/usr/local/tomcat/content/erddap`) is replaced by the generated `datasets.xml`. A backup of the original `datasets.xml` is created if one doesn't already exist.
 
-Consequently, when using `datasets.d` mode it is not necessary to mount the
-ERDDAP content directory at all. The contents of `datasets.d` provide all of the
-dataset configuration, and any top level `datasets.xml` configuration is performed
-through `ERDDAP_DATASETS_* env vars.
+Consequently, when using `datasets.d` mode it is not necessary to mount the ERDDAP content directory at all. The contents of `datasets.d` provide all of the dataset configuration, and any top level `datasets.xml` configuration is performed through `ERDDAP_DATASETS_* env vars.
 
-For an example of running with `datasets.d` mode, see the docker-compose
-example in [examples](./examples).
+For an example of running with `datasets.d` mode, see the docker-compose example in [examples](./examples).
 
-Generation of `datasets.xml` is handled in a script (`datasets.d.sh`)  which prints
-to stdout and can be tested outside of `docker-erddap` initialization.
+Generation of `datasets.xml` is handled in a script (`datasets.d.sh`)  which prints to stdout and can be tested outside of `docker-erddap` initialization.
 
 Example:
 
@@ -266,11 +234,7 @@ ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
 
 #### Initialization scripts (/init.d) - EXPERIMENTAL
 
-Additional configuration can be performed by placing executable files and/or
-shell scripts in `/init.d`. These executables will be run on every container
-start up, so they __must be idempotent__. This functionality is inspired by
-the postgres Docker image's
-[`/docker-entrypoint-initdb.d`](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts).
+Additional configuration can be performed by placing executable files and/or shell scripts in `/init.d`. These executables will be run on every container start up, so they **must be idempotent**. This functionality is inspired by the postgres Docker image's [`/docker-entrypoint-initdb.d`](https://github.com/docker-library/docs/blob/master/postgres/README.md#initialization-scripts).
 
 Example:
 
@@ -288,25 +252,18 @@ docker run -d -p 8080:8080 -v $(pwd)/init.d:/init.d:ro --name erddap axiom/docke
 
 #### Log Consolidation - EXPERIMENTAL
 
-ERDDAP writes logs to a `logs/log.txt` file relative to ERDDAP's `bigParentDirectory`.
-The log format doesn't adhere to a standard logging format and isn't easily parsable. The logs also
-don't provide timestamps for when the logs messages were written. To enhance the logging
-experience when using this docker image you can run a sidecar `rsyslog` container that will:
+ERDDAP writes logs to a `logs/log.txt` file relative to ERDDAP's `bigParentDirectory`. The log format doesn't adhere to a standard logging format and isn't easily parsable. The logs also don't provide timestamps for when the logs messages were written. To enhance the logging experience when using this docker image you can run a sidecar `rsyslog` container that will:
 
 * Consolidate the log files from ERDDAP and Tomcat (both application and access)
 * Add a timestamp to the ERDDAP logs
 * Filter out some ERDDAP log "noise" (opinionated)
 * Send the consolidated and filtered log messages to `stdout`
 
-For an example of running with a sidecar `rsyslog` container, see the docker-compose
-example in [examples](./examples). The supporting `rsyslog` configuration files are located in
-[rsyslog](./examples/rsyslog). Please note that this requires both the ERDDAP `bigParentDirectory`
-and Tomcat's log directory to be bind mounted to the host from the ERDDAP container
-or managed in Docker named volumes mounted to both the ERDDAP and rsyslog containers.
+For an example of running with a sidecar `rsyslog` container, see the docker-compose example in [examples](./examples). The supporting `rsyslog` configuration files are located in [rsyslog](./examples/rsyslog). Please note that this requires both the ERDDAP `bigParentDirectory` and Tomcat's log directory to be bind mounted to the host from the ERDDAP container or managed in Docker named volumes mounted to both the ERDDAP and rsyslog containers.
 
 Example consolidated log:
 
-```
+```log
 erddap-rsyslogd_1  | [TOMCAT] 08-Jul-2022 04:44:14.004 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
 erddap-rsyslogd_1  | [TOMCAT] 08-Jul-2022 04:44:14.011 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 3582 ms
 ...
