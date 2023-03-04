@@ -4,8 +4,8 @@ A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pf
 
 Most recent versions:
 
-* `axiom/docker-erddap:latest-jdk17-openjdk` (2.22)
-* `axiom/docker-erddap:2.22-jdk17-openjdk`
+* `axiom/docker-erddap:latest-jdk17-openjdk` (2.23)
+* `axiom/docker-erddap:2.23-jdk17-openjdk`
 
 See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your sever.
 
