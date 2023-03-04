@@ -23,6 +23,8 @@ jobs:
         include:
           - tag: "jdk17-openjdk"
             base: "unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839"
+          - tag: "jdk17-temurin-focal"
+            base: "unidata/tomcat-docker:10.1.0-jdk17-temurin-focal@sha256:99c083fd17d1f8d6c85a0f771039ffb4d2430ff7fd6dabea8eb50f2731328af8"
 
     steps:
     - name: Checkout
@@ -89,6 +91,8 @@ jobs:
         include:
           - tag: "jdk17-openjdk"
             base: "unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839"
+          - tag: "jdk17-temurin-focal"
+            base: "unidata/tomcat-docker:10.1.0-jdk17-temurin-focal@sha256:99c083fd17d1f8d6c85a0f771039ffb4d2430ff7fd6dabea8eb50f2731328af8"
 
     steps:
     - name: Checkout
