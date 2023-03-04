@@ -1,8 +1,8 @@
-ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839
+ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-temurin-focal@sha256:99c083fd17d1f8d6c85a0f771039ffb4d2430ff7fd6dabea8eb50f2731328af8
 FROM ${BASE_IMAGE}
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
-ARG ERDDAP_VERSION=2.22
+ARG ERDDAP_VERSION=2.23
 ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ARG ERDDAP_WAR_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
 ENV ERDDAP_bigParentDirectory /erddapData
@@ -31,8 +31,9 @@ COPY update-server-xml.sh /opt/update-server-xml.sh
 RUN /opt/update-server-xml.sh
 
 # Default configuration
+# Note: Make sure ERDDAP_flagKeyKey is set either in a runtime environment variable or in setup.xml
+#       If a value is not set, a random value for ERDDAP_flagKeyKey will be generated at runtime.
 ENV ERDDAP_baseHttpsUrl="https://localhost:8443" \
-    ERDDAP_flagKeyKey="73976bb0-9cd4-11e3-a5e2-0800200c9a66" \
     ERDDAP_emailEverythingTo="nobody@example.com" \
     ERDDAP_emailDailyReportsTo="nobody@example.com" \
     ERDDAP_emailFromAddress="nothing@example.com" \
