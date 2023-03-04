@@ -6,6 +6,12 @@ set -e
 # catalina.sh
 
 if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
+    # generate random flagKeyKey if not set
+    if [ -z "$ERDDAP_flagKeyKey" ] && grep "<flagKeyKey>CHANGE THIS TO YOUR FAVORITE QUOTE</flagKeyKey>" \
+        "${CATALINA_HOME}/content/erddap/setup.xml" &> /dev/null; then
+      echo "flagKeyKey isn't properly set. Generating a random value." >&2
+      export ERDDAP_flagKeyKey=$(cat /proc/sys/kernel/random/uuid)
+    fi
 
     USER_ID=${TOMCAT_USER_ID:-1000}
     GROUP_ID=${TOMCAT_GROUP_ID:-1000}
