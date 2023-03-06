@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-temurin-focal@sha256:99c083fd17d1f8d6c85a0f771039ffb4d2430ff7fd6dabea8eb50f2731328af8
+ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839
 FROM ${BASE_IMAGE}
 LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
 
