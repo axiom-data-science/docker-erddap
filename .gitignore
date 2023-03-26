@@ -1,3 +1,4 @@
 logs
 examples/erddapData
 examples/tomcatLogs
+examples/.env
