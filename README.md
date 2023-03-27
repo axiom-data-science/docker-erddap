@@ -239,7 +239,7 @@ to remove a previously served dataset:
 
 * Edit the dataset's `datasets.xml` element and set the `active` attribute to `false`.
 * Allow ERDDAP to detect the inactive dataset on the next update (or set a reload flag detect the change immediately)
-* Once ERDDAP has removed the dataset, remove the dataset's `datasets.xml` element (or leave as-is with `active="false"`
+* Once ERDDAP has removed the dataset, remove the dataset's `datasets.xml` element (or leave as-is with `active="false"`)
 
 Failure to follow this process will result in "orphan" datasets in the ERDDAP configuration.
 
