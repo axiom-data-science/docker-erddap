@@ -229,8 +229,23 @@ Generation of `datasets.xml` is handled in a script (`datasets.d.sh`)  which pri
 Example:
 
 ```shell
-ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh examples/datasets.d
+ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh -d examples/datasets.d
 ```
+
+##### Elegantly removing datasets in datasets.d mode
+
+ERDDAP has a [specific process](https://coastwatch.pfeg.noaa.gov/erddap/download/setupDatasetsXml.html#active)
+to remove a previously served dataset:
+
+* Edit the dataset's `datasets.xml` element and set the `active` attribute to `false`.
+* Allow ERDDAP to detect the inactive dataset on the next update (or set a reload flag detect the change immediately)
+* Once ERDDAP has removed the dataset, remove the dataset's `datasets.xml` element (or leave as-is with `active="false"`)
+
+Failure to follow this process will result in "orphan" datasets in the ERDDAP configuration.
+
+To allow `datasets.d` mode to automatically detect removed datasets (dataset ids in the running ERDDAP configuration but
+not present in the newly generated `datasets.xml`), you can set environment variable `DATASETSD_MARK_REMOVED_DATASETS_INACTIVE=1`
+or pass the `-i` flag to `./datasets.d.sh` when running manually. This behavior may become the default in the future.
 
 #### Initialization scripts (/init.d) - EXPERIMENTAL
 

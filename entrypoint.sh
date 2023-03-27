@@ -59,7 +59,7 @@ if [ "$1" = 'start-tomcat.sh' ] || [ "$1" = 'catalina.sh' ]; then
           cp "$DATASETS_XML" "${DATASETS_XML_BACKUP}"
         fi
       fi
-      /datasets.d.sh > "$DATASETS_XML"
+      /datasets.d.sh -o "$DATASETS_XML" -w
     fi
 
     ###
