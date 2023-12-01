@@ -1,6 +1,43 @@
-ARG BASE_IMAGE=unidata/tomcat-docker:10.1.0-jdk17-openjdk@sha256:8b595bcd8eee410e2d610829b5d4e312d51e3ea6c6bde952a5838845f67a4839
+ARG BASE_IMAGE=tomcat:10.1.16-jdk17-temurin-jammy
+#referencing a specific image digest pins our unidata tomcat-docker image to platform amd64 (good)
+ARG UNIDATA_TOMCAT_IMAGE=unidata/tomcat-docker:10-jdk17@sha256:af7d3fecec753cbd438f25881deeaf48b40ac1f105971d6f300252e104e39fb2
+FROM ${UNIDATA_TOMCAT_IMAGE} as unidata-tomcat-image
 FROM ${BASE_IMAGE}
-LABEL maintainer="Kyle Wilcox <kyle@axiomdatascience.com>"
+
+#use approaches and hardened files from https://github.com/Unidata/tomcat-docker
+#note: we don't inherit directly from Unidata/tomcat-docker to allow more
+#flexibility in building images using different tomcat base images, architectures, etc
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends  \
+        gosu \
+        zip \
+        unzip \
+        && \
+    # Cleanup
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Eliminate default web applications
+    rm -rf ${CATALINA_HOME}/webapps/* && \
+    rm -rf ${CATALINA_HOME}/webapps.dist && \
+    # Obscuring server info
+    cd ${CATALINA_HOME}/lib && \
+    mkdir -p org/apache/catalina/util/ && \
+    unzip -j catalina.jar org/apache/catalina/util/ServerInfo.properties \
+        -d org/apache/catalina/util/ && \
+    sed -i 's/server.info=.*/server.info=Apache Tomcat/g' \
+        org/apache/catalina/util/ServerInfo.properties && \
+    zip -ur catalina.jar \
+        org/apache/catalina/util/ServerInfo.properties && \
+    rm -rf org && cd ${CATALINA_HOME} && \
+    # Setting restrictive umask container-wide
+    echo "session optional pam_umask.so" >> /etc/pam.d/common-session && \
+    sed -i 's/UMASK.*022/UMASK           007/g' /etc/login.defs
+
+# Security enhanced web.xml
+#COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/conf/
+
+# Security enhanced server.xml
+#COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
 
 ARG ERDDAP_VERSION=2.23
 ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
