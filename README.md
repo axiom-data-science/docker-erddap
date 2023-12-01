@@ -7,9 +7,7 @@ Most recent versions:
 * `axiom/docker-erddap:latest-jdk17-openjdk` (2.23)
 * `axiom/docker-erddap:2.23-jdk17-openjdk`
 
-See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your sever.
-
-The [upstream image](https://github.com/Unidata/tomcat-docker) this project uses replaces tagged images with new images periodically. Even for release tags. This repository will **not** back-port changes from the upstream image to existing tags and overwrite them. If you require features from a newer upstream image (for example - SHA512 password hashes) you will have to wait for the next ERDDAP release which will be built with the newest upstream image. You can also build this image yourself.
+See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your server.
 
 Use any of the `latest-*` images with caution as they follow the upstream image, and is not as thoroughly tested as tagged images.
 
@@ -44,11 +42,11 @@ later customization
 
 ### Tomcat
 
-See [these instructions for configuring Tomcat](https://github.com/unidata/tomcat-docker) from the Tomcat image this is built from (`unidata/tomcat-docker`).
+See [these instructions for configuring Tomcat](https://github.com/unidata/tomcat-docker) from the Tomcat image this image borrows from (`unidata/tomcat-docker`).
 
 ### CORS
 
-The [Tomcat Docker image](https://github.com/unidata/tomcat-docker) used by this image enables the
+The [Tomcat configuration](https://github.com/unidata/tomcat-docker) used by this image enables the
 [Apache Tomcat CORS filter](https://tomcat.apache.org/tomcat-8.5-doc/config/filter.html#CORS_Filter) by
 default. To disable it (maybe you want to handle CORS uniformly in a proxying webserver?), set environment
 variable `DISABLE_CORS` to `1`.
