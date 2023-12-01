@@ -34,10 +34,10 @@ RUN apt-get update && \
     sed -i 's/UMASK.*022/UMASK           007/g' /etc/login.defs
 
 # Security enhanced web.xml
-#COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/conf/
+COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/conf/
 
 # Security enhanced server.xml
-#COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
+COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
 
 ARG ERDDAP_VERSION=2.23
 ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
