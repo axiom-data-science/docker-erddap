@@ -145,7 +145,7 @@ Any number of these options can be taken to configure your ERDDAP container inst
     ERDDAP_flagKeyKey="73976bb0-9cd4-11e3-a5e2-0800200c9a66"
 
     ERDDAP_emailEverythingTo="nobody@example.com"
-    ERDDAP_emailDailyReportsTo="nobody@example.com"
+    ERDDAP_emailDailyReportTo="nobody@example.com"
     ERDDAP_emailFromAddress="nothing@example.com"
     ERDDAP_emailUserName=""
     ERDDAP_emailPassword=""
