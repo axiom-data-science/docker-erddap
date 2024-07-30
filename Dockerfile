@@ -39,6 +39,10 @@ COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/
 # Security enhanced server.xml
 COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
 
+# Enable request attributes so that, when using a reverse proxy, the original
+# client ip is recorded in logs rather than the internal proxy ip
+RUN  sed -i 's/className="org.apache.catalina.valves.AccessLogValve"/className="org.apache.catalina.valves.AccessLogValve" requestAttributesEnabled="true"/g' ${CATALINA_HOME}/conf/server.xml
+
 ARG ERDDAP_VERSION=2.23
 ARG ERDDAP_CONTENT_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
 ARG ERDDAP_WAR_URL=https://github.com/BobSimons/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
