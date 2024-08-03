@@ -25,12 +25,12 @@ jobs:
         script: |
           const repo_name = "docker-erddap"
           const repo_owner = "axiom-data-science"
-          const assign_user = "kwilcox"
+          const assign_user = "srstsavage"
 
           const fs = require("fs")
 
           const release = await github.repos.getLatestRelease({
-            owner: "BobSimons",
+            owner: "ERDDAP",
             repo: "erddap"
           })
           const tag = release.data.tag_name
@@ -41,12 +41,12 @@ jobs:
           const docker_version = `v${docker_version_line.split(" ")[2]}`
 
           if (tag === docker_version) {
-            console.log(`Latest Docker version (${docker_version}) matches the latest available BobSimmons/erddap release`)
+            console.log(`Latest Docker version (${docker_version}) matches the latest available ERDDAP/erddap release`)
 
             return
           }
 
-          console.log(`Latest Docker version (${docker_version}) does not match the latest available BobSimmons/erddap release (${tag})`)
+          console.log(`Latest Docker version (${docker_version}) does not match the latest available ERDDAP/erddap release (${tag})`)
 
           const query = `query($owner: String!, $name: String!) { 
             repository(owner: $owner, name: $name) {
