@@ -1,4 +1,4 @@
-name: Push
+name: Build Docker images
 
 on:
   workflow_dispatch:
@@ -15,21 +15,20 @@ env:
 jobs:
   build:
     name: Build and test Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
 
     strategy:
-      #NOTE: make sure to replicate this matrix config in the push job below
       matrix:
         include:
           #amd64
           - platform: "linux/amd64"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:5d06ae2052b1a4c636454e65360a712fd262eebf574f8a97f37c2580edce7d46"
+            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:7d930ac5ba9091aa12c1a42e3cc7c59c12c8d032e076c3713c10bb9b35227b5d"
+            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
@@ -82,7 +81,7 @@ jobs:
 
   push:
     name: Push latest image to Docker Hub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
     needs: build
     if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
@@ -93,11 +92,11 @@ jobs:
           #amd64
           - platform: "linux/amd64"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:5d06ae2052b1a4c636454e65360a712fd262eebf574f8a97f37c2580edce7d46"
+            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:7d930ac5ba9091aa12c1a42e3cc7c59c12c8d032e076c3713c10bb9b35227b5d"
+            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
