@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=tomcat:10.1.16-jdk17-temurin-jammy
+ARG BASE_IMAGE=tomcat:10.1.26-jdk21-temurin-jammy
 #referencing a specific image digest pins our unidata tomcat-docker image to platform amd64 (good)
 ARG UNIDATA_TOMCAT_IMAGE=unidata/tomcat-docker:10-jdk17@sha256:af7d3fecec753cbd438f25881deeaf48b40ac1f105971d6f300252e104e39fb2
 FROM ${UNIDATA_TOMCAT_IMAGE} as unidata-tomcat-image
