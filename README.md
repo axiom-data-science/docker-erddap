@@ -179,17 +179,26 @@ Any number of these options can be taken to configure your ERDDAP container inst
 
     This is **highly** recommended, or nothing will persist across container restarts (logs/cache/etc.)
 
-5. Specify the amount of memory to be allocated:
+5. Specify the amount of heap memory (using Java's `Xms` and `Xmx`) to be allocated:
 
     ``` bash
     docker run \
         -p 8080:8080 \
-        --env ERDDAP_MIN_MEMORY=4G --env ERDDAP_MAX_MEMORY=8G
+        --env ERDDAP_MEMORY=10G
         ... \
         axiom/docker-erddap
     ```
 
-    Note that both environment variables will fall back to a single ERDDAP_MEMORY variable, which in turn falls back to 4G by default.
+    You may also explicity set `ERDDAP_MIN_MEMORY` and `ERDDAP_MAX_MEMORY` value (these map to `Xms` and `Xmx` respectively),
+    but generally the best practice is to set these to the same value to prevent costly heap resizing at runtime.
+
+    ``` bash
+    docker run \
+        -p 8080:8080 \
+        --env ERDDAP_MIN_MEMORY=8G --env ERDDAP_MAX_MEMORY=8G
+        ... \
+        axiom/docker-erddap
+    ```
 
     Alternatively, you can set `ERDDAP_MAX_RAM_PERCENTAGE` set the maximum Java heap size to a percentage of the memory available to the container. This option sets the JVM option `-XX:MaxRAMPercentage`. For example, to limit the container's memory to 10GB and allow the Java heap size to use 90% of that amount:
 
