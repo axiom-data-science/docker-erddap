@@ -1,4 +1,4 @@
-name: Push
+name: Build Docker images
 
 on:
   workflow_dispatch:
@@ -15,29 +15,28 @@ env:
 jobs:
   build:
     name: Build and test Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
 
     strategy:
-      #NOTE: make sure to replicate this matrix config in the push job below
       matrix:
         include:
           #amd64
           - platform: "linux/amd64"
-            tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:5d06ae2052b1a4c636454e65360a712fd262eebf574f8a97f37c2580edce7d46"
+            tag: "jdk21-openjdk"
+            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
-            tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:7d930ac5ba9091aa12c1a42e3cc7c59c12c8d032e076c3713c10bb9b35227b5d"
+            tag: "jdk21-openjdk"
+            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
 
     - name: Docker meta
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: |
           axiom/docker-erddap
@@ -46,10 +45,10 @@ jobs:
           type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
 
     - name: Cache Docker layers
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ${ BUILDX_CACHE }
         key: ${ CACHE_KEY }${{ github.sha }}
@@ -57,7 +56,7 @@ jobs:
           ${ CACHE_KEY }
 
     - name: Build image
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: false
         platforms: ${{ matrix.platform }}
@@ -82,7 +81,7 @@ jobs:
 
   push:
     name: Push latest image to Docker Hub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 10
     needs: build
     if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
@@ -93,19 +92,19 @@ jobs:
           #amd64
           - platform: "linux/amd64"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:5d06ae2052b1a4c636454e65360a712fd262eebf574f8a97f37c2580edce7d46"
+            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
             tag: "jdk17-openjdk"
-            base: "tomcat:10.1.16-jdk17-temurin-jammy@sha256:7d930ac5ba9091aa12c1a42e3cc7c59c12c8d032e076c3713c10bb9b35227b5d"
+            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
 
     - name: Docker meta
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: |
           axiom/docker-erddap
@@ -114,10 +113,10 @@ jobs:
           type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
 
     - name: Cache Docker layers
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ${ BUILDX_CACHE }
         key: ${ CACHE_KEY }${{ github.sha }}
@@ -125,13 +124,13 @@ jobs:
           ${ CACHE_KEY }
 
     - name: Login to Docker Hub
-      uses: docker/login-action@v1
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Push to Docker Hub
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v6
       with:
         push: true
         platforms: ${{ matrix.platform }}
@@ -143,7 +142,7 @@ jobs:
         cache-to: type=local,dest=${ BUILDX_CACHE }
 
     - name: Update repo description
-      uses: peter-evans/dockerhub-description@v3
+      uses: peter-evans/dockerhub-description@v4
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
