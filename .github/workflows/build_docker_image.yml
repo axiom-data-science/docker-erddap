@@ -23,11 +23,11 @@ jobs:
         include:
           #amd64
           - platform: "linux/amd64"
-            tag: "jdk21-openjdk"
+            tag: "${{ vars.DOCKER_TAG }}"
             base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
-            tag: "jdk21-openjdk"
+            tag: "${{ vars.DOCKER_TAG }}"
             base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
@@ -91,11 +91,11 @@ jobs:
         include:
           #amd64
           - platform: "linux/amd64"
-            tag: "jdk17-openjdk"
+            tag: "${{ vars.DOCKER_TAG }}"
             base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
-            tag: "jdk17-openjdk"
+            tag: "${{ vars.DOCKER_TAG }}"
             base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
 
     steps:
