@@ -4,7 +4,8 @@ A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pf
 
 Most recent versions:
 
-* `axiom/docker-erddap:latest-jdk21-openjdk` (2.24)
+* `axiom/docker-erddap:latest-jdk21-openjdk` (2.25)
+* `axiom/docker-erddap:2.25-jdk21-openjdk`
 * `axiom/docker-erddap:2.24-jdk21-openjdk`
 * `axiom/docker-erddap:2.23-jdk17-openjdk`
 
