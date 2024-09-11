@@ -39,9 +39,10 @@ COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/
 # Security enhanced server.xml
 COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
 
-ARG ERDDAP_VERSION=2.24
-ARG ERDDAP_CONTENT_URL=https://github.com/ERDDAP/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
-ARG ERDDAP_WAR_URL=https://github.com/ERDDAP/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
+ARG ERDDAP_VERSION=2.25.1
+ARG ERDDAP_CONTENT_VERSION=1.0.0
+ARG ERDDAP_CONTENT_URL="https://github.com/ERDDAP/erddapContent/archive/refs/tags/content${ERDDAP_CONTENT_VERSION}.zip"
+ARG ERDDAP_WAR_URL="https://github.com/ERDDAP/erddap/releases/download/v${ERDDAP_VERSION}/erddap.war"
 ENV ERDDAP_bigParentDirectory /erddapData
 
 RUN apt-get update && apt-get install -y unzip xmlstarlet \

@@ -11,6 +11,8 @@ on:
 env:
   BUILDX_CACHE: /tmp/.buildx-cache
   CACHE_KEY: docker-erddap-buildx-
+  TOMCAT_AMD64_IMAGE: tomcat:10.1.26-jdk21-temurin-jammy@sha256:18952effb643bf192799e4ab2ca7c121d58871e96e5709fb5d405f4682a9aae7
+  TOMCAT_ARM64_IMAGE: tomcat:10.1.26-jdk21-temurin-jammy@sha256:4775c2227f16ee2726a35a1e97f43bfcb1a085cad23e169b1066ec9603826d8b
 
 jobs:
   build:
@@ -24,11 +26,11 @@ jobs:
           #amd64
           - platform: "linux/amd64"
             tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
+            base: "${{ TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
             tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
+            base: "${{ TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
@@ -92,11 +94,11 @@ jobs:
           #amd64
           - platform: "linux/amd64"
             tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
+            base: "${{ TOMCAT_AMD64_IMAGE }}"
           #arm64/v8
           - platform: "linux/arm64/v8"
             tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
+            base: "${{ TOMCAT_ARM64_IMAGE }}"
 
     steps:
     - name: Checkout
