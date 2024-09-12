@@ -38,7 +38,7 @@ jobs:
           const dockerfile = fs.readFileSync(`${process.env.GITHUB_WORKSPACE}/Dockerfile`, "utf-8")
           const lines = dockerfile.split("\n")
           const docker_version_line = lines.find(line => line.includes("ERDDAP_VERSION"))
-          const docker_version = `v${docker_version_line.split(" ")[2]}`
+          const docker_version = `v${docker_version_line.split("=")[1]}`
 
           if (tag === docker_version) {
             console.log(`Latest Docker version (${docker_version}) matches the latest available ERDDAP/erddap release`)
