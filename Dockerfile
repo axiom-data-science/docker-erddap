@@ -43,7 +43,7 @@ ARG ERDDAP_VERSION=2.25.1
 ARG ERDDAP_CONTENT_VERSION=1.0.0
 ARG ERDDAP_WAR_URL="https://github.com/ERDDAP/erddap/releases/download/v${ERDDAP_VERSION}/erddap.war"
 ARG ERDDAP_CONTENT_URL="https://github.com/ERDDAP/erddapContent/archive/refs/tags/content${ERDDAP_CONTENT_VERSION}.zip"
-ENV ERDDAP_bigParentDirectory /erddapData
+ENV ERDDAP_bigParentDirectory=/erddapData
 
 RUN apt-get update && apt-get install -y unzip xmlstarlet \
     && if ! command -v gosu &> /dev/null; then apt-get install -y gosu; fi \
@@ -51,12 +51,13 @@ RUN apt-get update && apt-get install -y unzip xmlstarlet \
 
 ARG BUST_CACHE=1
 RUN \
-    curl -fSL "${ERDDAP_CONTENT_URL}" -o /erddapContent.zip && \
-    unzip /erddapContent.zip -d ${CATALINA_HOME} && \
-    rm /erddapContent.zip && \
-    curl -fSL "${ERDDAP_WAR_URL}" -o /erddap.war && \
-    unzip /erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
-    rm /erddap.war && \
+    mkdir -p /tmp/dl && \
+    curl -fSL "${ERDDAP_WAR_URL}" -o /tmp/dl/erddap.war && \
+    unzip /tmp/dl/erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
+    curl -fSL "${ERDDAP_CONTENT_URL}" -o /tmp/dl/erddapContent.zip && \
+    unzip /tmp/dl/erddapContent.zip -d /tmp/dl/erddapContent && \
+    find /tmp/dl/erddapContent -type d -name content -exec cp -r "{}" ${CATALINA_HOME} \; && \
+    rm -rf /tmp/dl && \
     sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
     rm -rf /tmp/* /var/tmp/* && \
     mkdir -p ${ERDDAP_bigParentDirectory}
