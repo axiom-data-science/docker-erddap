@@ -1,7 +1,7 @@
 ARG BASE_IMAGE=tomcat:10.1.26-jdk21-temurin-jammy
 #referencing a specific image digest pins our unidata tomcat-docker image to platform amd64 (good)
 ARG UNIDATA_TOMCAT_IMAGE=unidata/tomcat-docker:10-jdk17@sha256:af7d3fecec753cbd438f25881deeaf48b40ac1f105971d6f300252e104e39fb2
-FROM ${UNIDATA_TOMCAT_IMAGE} as unidata-tomcat-image
+FROM ${UNIDATA_TOMCAT_IMAGE} AS unidata-tomcat-image
 FROM ${BASE_IMAGE}
 
 #use approaches and hardened files from https://github.com/Unidata/tomcat-docker
@@ -39,9 +39,10 @@ COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/
 # Security enhanced server.xml
 COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
 
-ARG ERDDAP_VERSION=2.24
-ARG ERDDAP_CONTENT_URL=https://github.com/ERDDAP/erddap/releases/download/v$ERDDAP_VERSION/erddapContent.zip
-ARG ERDDAP_WAR_URL=https://github.com/ERDDAP/erddap/releases/download/v$ERDDAP_VERSION/erddap.war
+ARG ERDDAP_VERSION=2.25.1
+ARG ERDDAP_CONTENT_VERSION=1.0.0
+ARG ERDDAP_WAR_URL="https://github.com/ERDDAP/erddap/releases/download/v${ERDDAP_VERSION}/erddap.war"
+ARG ERDDAP_CONTENT_URL="https://github.com/ERDDAP/erddapContent/archive/refs/tags/content${ERDDAP_CONTENT_VERSION}.zip"
 ENV ERDDAP_bigParentDirectory /erddapData
 
 RUN apt-get update && apt-get install -y unzip xmlstarlet \
