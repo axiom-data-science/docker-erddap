@@ -36,6 +36,10 @@ function set_attribute {
 set_attribute /Server/Service/Connector relaxedPathChars "$RELAXED_PATH_CHARS"
 set_attribute /Server/Service/Connector relaxedQueryChars "$RELAXED_QUERY_CHARS"
 
+# Enable request attributes so that, when using a reverse proxy, the original
+# client ip is recorded in logs rather than the internal proxy ip
+set_attribute /Server/Service/Engine/Host/Valve requestAttributesEnable "true"
+
 #create RemoteIpValve if missing. this is needed so ERDDAP knows when its responding to https requests
 #end result should look like:
 #<Valve className="org.apache.catalina.valves.RemoteIpValve"
