@@ -7,10 +7,8 @@ on:
     branches:
       - main
   release:
-    types: [published]
-env:
-  BUILDX_CACHE: /tmp/.buildx-cache
-  CACHE_KEY: docker-erddap-buildx-
+    types:
+      - published
 
 jobs:
   build:
@@ -18,132 +16,30 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 10
 
-    strategy:
-      matrix:
-        include:
-          #amd64
-          - platform: "linux/amd64"
-            tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
-          #arm64/v8
-          - platform: "linux/arm64/v8"
-            tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: |
-          axiom/docker-erddap
-        tags: |
-          type=raw,value=${{ matrix.tag }},prefix=latest-
-          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: ${ BUILDX_CACHE }
-        key: ${ CACHE_KEY }${{ github.sha }}
-        restore-keys: |
-          ${ CACHE_KEY }
-
-    - name: Build image
+    - name: Build image for testing
       uses: docker/build-push-action@v6
       with:
         push: false
-        platforms: ${{ matrix.platform }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        build-args: |
-          BASE_IMAGE=${{ matrix.base }}
-        cache-from: type=local,src=${ BUILDX_CACHE }
-        cache-to: type=local,dest=${ BUILDX_CACHE }
+        tags: docker-erddap-test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         outputs: type=docker
 
     - name: Run Docker Image in Background
-      if: matrix.platform == 'linux/amd64'
-      run: docker run -d -p 8080:8080 ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+      run: docker run -d -p 8080:8080 docker-erddap-test
 
     - name: Check that ERDDAP Docker Image will return a 200
-      if: matrix.platform == 'linux/amd64'
       uses: ifaxity/wait-on-action@v1
       timeout-minutes: 1
       with:
         resource: http://localhost:8080/erddap/index.html
 
-  push:
-    name: Push latest image to Docker Hub
-    runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: build
-    if: (github.event_name == 'release' && github.event.action == 'published') || (github.ref == 'refs/heads/main') && github.repository == 'axiom-data-science/docker-erddap'
-
-    strategy:
-      matrix:
-        include:
-          #amd64
-          - platform: "linux/amd64"
-            tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_AMD64_IMAGE }}"
-          #arm64/v8
-          - platform: "linux/arm64/v8"
-            tag: "${{ vars.DOCKER_TAG }}"
-            base: "${{ vars.TOMCAT_ARM64_IMAGE }}"
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Docker meta
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: |
-          axiom/docker-erddap
-        tags: |
-          type=raw,value=${{ matrix.tag }},prefix=latest-
-          type=raw,value=${{ github.event.release.tag_name }},suffix=-${{ matrix.tag }},enable=${{ github.event_name == 'release' && github.event.action == 'published' }}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: ${ BUILDX_CACHE }
-        key: ${ CACHE_KEY }${{ github.sha }}
-        restore-keys: |
-          ${ CACHE_KEY }
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Push to Docker Hub
-      uses: docker/build-push-action@v6
-      with:
-        push: true
-        platforms: ${{ matrix.platform }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        build-args: |
-          BASE_IMAGE=${{ matrix.base }}
-        cache-from: type=local,src=${ BUILDX_CACHE }
-        cache-to: type=local,dest=${ BUILDX_CACHE }
-
-    - name: Update repo description
-      uses: peter-evans/dockerhub-description@v4
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: axiom/docker-erddap
+    - name: Publish Docker images
+      if: |
+        ((github.event_name == 'release' && github.event.action == 'published') || github.ref == 'refs/heads/main')
+        && github.repository == 'axiom-data-science/docker-erddap'
+      uses: ./.github/actions/publish_docker_image
