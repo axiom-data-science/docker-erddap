@@ -38,6 +38,12 @@ jobs:
       with:
         resource: http://localhost:8080/erddap/index.html
 
+    - name: Checkout custom actions
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          .github
+
     - name: Publish Docker images
       if: |
         ((github.event_name == 'release' && github.event.action == 'published') || github.ref == 'refs/heads/main')
