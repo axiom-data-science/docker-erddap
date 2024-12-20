@@ -49,3 +49,6 @@ jobs:
         ((github.event_name == 'release' && github.event.action == 'published') || github.ref == 'refs/heads/main')
         && github.repository == 'axiom-data-science/docker-erddap'
       uses: ./.github/actions/publish_docker_image
+      with:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
