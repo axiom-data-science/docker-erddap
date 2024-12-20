@@ -17,8 +17,7 @@ runs:
         images: |
           axiom/docker-erddap
         flavor: |
-          suffix=-jdk21-openjdk
-          suffixLatest=true
+          suffix=-jdk21-openjdk,onlatest=true
         tags: |
           type=raw,value=latest,enable={{is_default_branch}}
           type=ref,event=tag
