@@ -1,100 +1,58 @@
-ARG BASE_IMAGE=tomcat:10.1.26-jdk21-temurin-jammy
-#referencing a specific image digest pins our unidata tomcat-docker image to platform amd64 (good)
-ARG UNIDATA_TOMCAT_IMAGE=unidata/tomcat-docker:10-jdk17@sha256:af7d3fecec753cbd438f25881deeaf48b40ac1f105971d6f300252e104e39fb2
-FROM ${UNIDATA_TOMCAT_IMAGE} AS unidata-tomcat-image
-FROM ${BASE_IMAGE}
+ARG ERDDAP_VERSION=v2.27.0
+ARG BASE_IMAGE=erddap/erddap:$ERDDAP_VERSION
+FROM $BASE_IMAGE
 
-#use approaches and hardened files from https://github.com/Unidata/tomcat-docker
-#note: we don't inherit directly from Unidata/tomcat-docker to allow more
-#flexibility in building images using different tomcat base images, architectures, etc
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends  \
-        gosu \
-        zip \
-        unzip \
-        && \
-    # Cleanup
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    # Eliminate default web applications
-    rm -rf ${CATALINA_HOME}/webapps/* && \
-    rm -rf ${CATALINA_HOME}/webapps.dist && \
-    # Obscuring server info
-    cd ${CATALINA_HOME}/lib && \
-    mkdir -p org/apache/catalina/util/ && \
-    unzip -j catalina.jar org/apache/catalina/util/ServerInfo.properties \
-        -d org/apache/catalina/util/ && \
-    sed -i 's/server.info=.*/server.info=Apache Tomcat/g' \
-        org/apache/catalina/util/ServerInfo.properties && \
-    zip -ur catalina.jar \
-        org/apache/catalina/util/ServerInfo.properties && \
-    rm -rf org && cd ${CATALINA_HOME} && \
-    # Setting restrictive umask container-wide
-    echo "session optional pam_umask.so" >> /etc/pam.d/common-session && \
-    sed -i 's/UMASK.*022/UMASK           007/g' /etc/login.defs
-
-# Security enhanced web.xml
-COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/web.xml ${CATALINA_HOME}/conf/
-
-# Security enhanced server.xml
-COPY --from=unidata-tomcat-image ${CATALINA_HOME}/conf/server.xml ${CATALINA_HOME}/conf/
-
-ARG ERDDAP_VERSION=2.25.1
-ARG ERDDAP_CONTENT_VERSION=1.0.0
-ARG ERDDAP_WAR_URL="https://github.com/ERDDAP/erddap/releases/download/v${ERDDAP_VERSION}/erddap.war"
-ARG ERDDAP_CONTENT_URL="https://github.com/ERDDAP/erddapContent/archive/refs/tags/content${ERDDAP_CONTENT_VERSION}.zip"
-ENV ERDDAP_bigParentDirectory=/erddapData
-
-RUN apt-get update && apt-get install -y unzip xmlstarlet \
-    && if ! command -v gosu &> /dev/null; then apt-get install -y gosu; fi \
+RUN apt-get update && apt-get install -y gettext-base xmlstarlet \
     && rm -rf /var/lib/apt/lists/*
 
-ARG BUST_CACHE=1
-RUN \
-    mkdir -p /tmp/dl && \
-    curl -fSL "${ERDDAP_WAR_URL}" -o /tmp/dl/erddap.war && \
-    unzip /tmp/dl/erddap.war -d ${CATALINA_HOME}/webapps/erddap/ && \
-    curl -fSL "${ERDDAP_CONTENT_URL}" -o /tmp/dl/erddapContent.zip && \
-    unzip /tmp/dl/erddapContent.zip -d /tmp/dl/erddapContent && \
-    find /tmp/dl/erddapContent -type d -name content -exec cp -r "{}" ${CATALINA_HOME} \; && \
-    rm -rf /tmp/dl && \
-    sed -i 's#</Context>#<Resources cachingAllowed="true" cacheMaxSize="100000" />\n&#' ${CATALINA_HOME}/conf/context.xml && \
-    rm -rf /tmp/* /var/tmp/* && \
-    mkdir -p ${ERDDAP_bigParentDirectory}
+COPY datasets.d.sh /
 
-# Java options
-COPY files/setenv.sh ${CATALINA_HOME}/bin/setenv.sh
+# advise users to use upstream offical ERDDAP docker image
+# if they aren't using experimental features in this image
+COPY --chmod=755 <<EOF /init.d/00-advise-upstream.sh
+#/bin/sh
+cat <<EOF2
 
-# server.xml fixup
-COPY update-server-xml.sh /opt/update-server-xml.sh
-RUN /opt/update-server-xml.sh
+███████ ██████  ██████  ██████   █████  ██████  
+██      ██   ██ ██   ██ ██   ██ ██   ██ ██   ██ 
+█████   ██████  ██   ██ ██   ██ ███████ ██████  
+██      ██   ██ ██   ██ ██   ██ ██   ██ ██      
+███████ ██   ██ ██████  ██████  ██   ██ ██      
 
-# Default configuration
-# Note: Make sure ERDDAP_flagKeyKey is set either in a runtime environment variable or in setup.xml
-#       If a value is not set, a random value for ERDDAP_flagKeyKey will be generated at runtime.
-ENV ERDDAP_baseHttpsUrl="https://localhost:8443" \
-    ERDDAP_emailEverythingTo="nobody@example.com" \
-    ERDDAP_emailDailyReportsTo="nobody@example.com" \
-    ERDDAP_emailFromAddress="nothing@example.com" \
-    ERDDAP_emailUserName="" \
-    ERDDAP_emailPassword="" \
-    ERDDAP_emailProperties="" \
-    ERDDAP_emailSmtpHost="" \
-    ERDDAP_emailSmtpPort="" \
-    ERDDAP_adminInstitution="Axiom Docker Install" \
-    ERDDAP_adminInstitutionUrl="https://github.com/axiom-data-science/docker-erddap" \
-    ERDDAP_adminIndividualName="Axiom Docker Install" \
-    ERDDAP_adminPosition="Software Engineer" \
-    ERDDAP_adminPhone="555-555-5555" \
-    ERDDAP_adminAddress="123 Irrelevant St." \
-    ERDDAP_adminCity="Nowhere" \
-    ERDDAP_adminStateOrProvince="AK" \
-    ERDDAP_adminPostalCode="99504" \
-    ERDDAP_adminCountry="USA" \
-    ERDDAP_adminEmail="nobody@example.com"
+NOTE: As of version v2.27.0 this image (axiom/docker-erddap)
+is derived from the official ERDDAP Docker image (erddap/erddap).
 
-COPY entrypoint.sh datasets.d.sh /
-ENTRYPOINT ["/entrypoint.sh"]
+If you are not using any experimental functionality offered
+by the axiom image (notably datasets.d), you are recommended
+to use the official ERDDAP Docker image instead.
 
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
+See https://hub.docker.com/r/erddap/erddap for more details.                                                
+
+EOF2
+EOF
+
+COPY --chmod=755 <<'EOF' /init.d/50-datasets.d.sh
+#/bin/sh
+###
+# Add datasets in /datasets.d to datasets.xml
+###
+if [ -d "/datasets.d" ]; then
+  echo "Creating datasets.xml from /datasets.d"
+  ERDDAP_CONTENT_DIR="/usr/local/tomcat/content/erddap"
+  DATASETS_XML="${ERDDAP_CONTENT_DIR}/datasets.xml"
+  if [ -f "$DATASETS_XML" ]; then
+    #datasets.xml exists, make sure we have a backup of it
+    DATASETS_XML_MD5SUM=$(md5sum "$DATASETS_XML" | awk '{print $1}')
+    if ! md5sum "${ERDDAP_CONTENT_DIR}/datasets.xml.*.bak" 2>/dev/null | grep -q "$DATASETS_XML_MD5SUM"; then
+      #we don't have a backup of this version of datasets.xml yet, make one
+      DATASETS_XML_BACKUP="${ERDDAP_CONTENT_DIR}"/datasets.xml.$(date -u +"%Y%m%dT%H%M%SZ").bak
+      echo "Backing up "${DATASETS_XML}" to ${DATASETS_XML_BACKUP}"
+      cp "$DATASETS_XML" "${DATASETS_XML_BACKUP}"
+    fi
+  fi
+  /datasets.d.sh -o "$DATASETS_XML" -w
+fi
+EOF
+
+ENV ERDDAP_useHeadersForUrl=true \
+    ERDDAP_useSaxParser=true

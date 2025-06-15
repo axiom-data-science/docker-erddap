@@ -1,19 +1,37 @@
 # ERDDAP on Docker
 
-A feature full Tomcat (SSL over APR, etc.) running [ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html)
+[ERDDAP](http://coastwatch.pfeg.noaa.gov/erddap/index.html) docker image with experimental features (datasets.d, see below).
+
+## Upstream Official ERDDAP Docker Image
+
+As of version v2.27.0 this image (axiom/docker-erddap)
+is derived from the official ERDDAP Docker image (erddap/erddap).
+
+If you are not using any experimental functionality offered
+by the axiom image (notably datasets.d), you are recommended
+to use the official ERDDAP Docker image instead.
+
+See https://hub.docker.com/r/erddap/erddap for more details.
+
+## Versions
 
 Most recent versions:
 
-* `axiom/docker-erddap:latest-jdk21-openjdk` (2.25.1)
+* `axiom/docker-erddap:latest`
+* `axiom/docker-erddap:v2.27.0`
 * `axiom/docker-erddap:2.25.1-jdk21-openjdk`
-* `axiom/docker-erddap:2.24-jdk21-openjdk`
-* `axiom/docker-erddap:2.23-jdk17-openjdk`
 
-See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags). As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html) documentation before upgrading your server.
+See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags).
+As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html)
+documentation before upgrading your server.
 
-Use any of the `latest-*` images with caution as they follow the upstream image, and is not as thoroughly tested as tagged images.
+Use any of the `latest-*` images with caution as they follow the upstream image,
+and is not as thoroughly tested as tagged images.
 
-[Dependabot](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically) is used to automatically make PRs to update the upstream image ([`.github/dependabot.yml`](.github/dependabot.yml)).
+## Breaking changes
+
+* v2.27.0
+** CORS is now off by default. To enable it, set `ERDDAP_enableCors=true`.
 
 ## Quickstart
 
@@ -37,7 +55,7 @@ or, generate a basic dataset configuration without input for
 later customization
 
 ```bash
-./make-dataset.xml /path/to/your.csv EDDTableFromAsciiFiles > /path/to/your-dataset.xml
+./make-dataset-xml.sh /path/to/your.csv EDDTableFromAsciiFiles > /path/to/your-dataset.xml
 ```
 
 ## Configuration
@@ -48,10 +66,7 @@ See [these instructions for configuring Tomcat](https://github.com/unidata/tomca
 
 ### CORS
 
-The [Tomcat configuration](https://github.com/unidata/tomcat-docker) used by this image enables the
-[Apache Tomcat CORS filter](https://tomcat.apache.org/tomcat-8.5-doc/config/filter.html#CORS_Filter) by
-default. To disable it (maybe you want to handle CORS uniformly in a proxying webserver?), set environment
-variable `DISABLE_CORS` to `1`.
+CORS is off by default. To enable it, set `ERDDAP_enableCors=true`.
 
 ### ERDDAP
 
@@ -240,6 +255,8 @@ Example:
 ```shell
 ERDDAP_DATASETS_cacheMinutes=20 ./datasets.d.sh -d examples/datasets.d
 ```
+
+As of version v2.27.0 environment variables in the generated datasets.xml file will also be replaced using envsubst.
 
 ##### Elegantly removing datasets in datasets.d mode
 

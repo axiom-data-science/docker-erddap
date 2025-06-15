@@ -8,7 +8,7 @@ services:
       ERDDAP_DATASETS_standardPrivacyPolicy: "<h1>Any and all usage of this data is permitted.</h1>"
       DATASETSD_MARK_REMOVED_DATASETS_INACTIVE: "1"
       DATASETSD_REFRESH_MISSING_DATASETS: "1"
-      DISABLE_CORS: "1"
+      TREES_DATASET_NAME: "asdf-trees"
     volumes:
       - ./data:/data:ro
       - ./datasets.d:/datasets.d:ro

@@ -1,4 +1,4 @@
-<dataset type="EDDTableFromAsciiFiles" datasetID="trees" active="true">
+<dataset type="EDDTableFromAsciiFiles" datasetID="${TREES_DATASET_NAME}" active="true">
   <reloadEveryNMinutes>10080</reloadEveryNMinutes>
   <updateEveryNMillis>10000</updateEveryNMillis>
   <fileDir>/data/</fileDir>
