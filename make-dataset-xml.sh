@@ -20,7 +20,9 @@ DATASET_TYPE=${2:-"EDDTableFromAsciiFiles"}
 TARGET_FILENAME="$(basename ""$TARGET_FILE"")"
 
 docker run --rm -v $(realpath "$TARGET_FILE"):/data_directory/data_file \
-  --workdir /usr/local/tomcat/webapps/erddap/WEB-INF axiom/docker-erddap \
+  --workdir /usr/local/tomcat/webapps/erddap/WEB-INF \
+  -e ERDDAP_flagKeyKey=$(date +%s) \
+  axiom/docker-erddap:latest-jdk21-openjdk \
     bash ./GenerateDatasetsXml.sh ${DATASET_TYPE} /data_directory data_file $(yes '""' | head -n 18) \
   | sed -n '/^<dataset/,${p;/^<\/dataset/q}' \
   | xmlstarlet edit --omit-decl \

@@ -12,6 +12,8 @@ DATASETSD_OUTPUT_PATH="${DATASETSD_OUTPUT_PATH:-/usr/local/tomcat/content/erddap
 DATASETSD_MARK_REMOVED_DATASETS_INACTIVE="${DATASETSD_MARK_REMOVED_DATASETS_INACTIVE:-0}"
 DATASETSD_WRITE_TO_OUTPUT_PATH="${DATASETSD_WRITE_TO_OUTPUT_PATH:-0}"
 DATASETSD_REFRESH_MISSING_DATASETS="${DATASETSD_REFRESH_MISSING_DATASETS:-0}"
+ERDDAP_bigParentDirectory="${ERDDAP_bigParentDirectory:-/erddapData}"
+
 while getopts ":d:io:rw" opt; do
   case ${opt} in
     d )
@@ -71,18 +73,25 @@ if [ "$DATASETSD_MARK_REMOVED_DATASETS_INACTIVE" == "1" ] && [ -n "$DATASETSD_OU
   true
 fi
 
-#empty edit for formatting
-DXML=$(echo "$DXML" | xmlstarlet edit --inplace)
+#empty edit for formatting, substituting env vars with envsubst
+DXML=$(echo "$DXML" | xmlstarlet edit --inplace | envsubst)
 
 #write output to target file if one was provided and write to stdout flag was not provided
 if [ -n "$DATASETSD_OUTPUT_PATH" ] && [ "$DATASETSD_WRITE_TO_OUTPUT_PATH" == "1" ]; then
   echo "$DXML" > "$DATASETSD_OUTPUT_PATH"
   #set refresh flags for any datasetIDs in datasets.xml that are not in the running ERDDAP config if the refresh option was set
-  if [ -n "$DATASETSD_REFRESH_MISSING_DATASETS" ] && [ "$DATASETSD_REFRESH_MISSING_DATASETS" == "1" ]; then
-    comm -23 \
-      <(xmlstarlet select -t -v "/erddapDatasets/dataset/@datasetID" "$DATASETSD_OUTPUT_PATH" | sort) \
-      <(curl -sS "http://localhost:8080/erddap/tabledap/allDatasets.csv0?datasetID" | grep -v "^allDatasets$" | sort) \
-      | xargs -I{} touch /erddapData/flag/{}
+  #check if erddap is running and /erddapData/flag exists first
+  if [ -n "$DATASETSD_REFRESH_MISSING_DATASETS" ] && [ "$DATASETSD_REFRESH_MISSING_DATASETS" == "1" ] ; then
+    if ! curl -fsS "http://localhost:8080/erddap/index.html" &> /dev/null; then
+      echo "Skipping refresh of missing datasets because ERDDAP isn't running"
+    elif ! [ -d "${ERDDAP_bigParentDirectory}/flag" ]; then
+      echo "Skipping refresh of missing datasets because ${ERDDAP_bigParentDirectory}/flag directory doesn't exist"
+    else
+      comm -23 \
+        <(xmlstarlet select -t -v "/erddapDatasets/dataset/@datasetID" "$DATASETSD_OUTPUT_PATH" | sort) \
+        <(curl -sS "http://localhost:8080/erddap/tabledap/allDatasets.csv0?datasetID" | grep -v "^allDatasets$" | sort) \
+        | xargs -I{} touch "${ERDDAP_bigParentDirectory}"/flag/{}
+    fi
   fi
 else
   echo "$DXML"
