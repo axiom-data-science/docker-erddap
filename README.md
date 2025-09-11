@@ -18,6 +18,7 @@ See https://hub.docker.com/r/erddap/erddap for more details.
 Most recent versions:
 
 * `axiom/docker-erddap:latest`
+* `axiom/docker-erddap:v2.28.1`
 * `axiom/docker-erddap:v2.27.0`
 * `axiom/docker-erddap:2.25.1-jdk21-openjdk`
 
@@ -29,6 +30,10 @@ Use any of the `latest-*` images with caution as they follow the upstream image,
 and is not as thoroughly tested as tagged images.
 
 ## Breaking changes
+
+Breaking changes are noted for the functionality added by this image only.
+Please also review the [ERDDAP change notes] (https://erddap.github.io/changes)
+before upgrading.
 
 * v2.27.0
 ** CORS is now off by default. To enable it, set `ERDDAP_enableCors=true`.
