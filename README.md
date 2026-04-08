@@ -18,10 +18,9 @@ See https://hub.docker.com/r/erddap/erddap for more details.
 Most recent versions:
 
 * `axiom/docker-erddap:latest`
+* `axiom/docker-erddap:v2.30.0`
 * `axiom/docker-erddap:v2.29.0`
 * `axiom/docker-erddap:v2.28.1`
-* `axiom/docker-erddap:v2.27.0`
-* `axiom/docker-erddap:2.25.1-jdk21-openjdk`
 
 See all versions available [here](https://hub.docker.com/r/axiom/docker-erddap/tags).
 As always, consult the [ERDDAP Changes](https://coastwatch.pfeg.noaa.gov/erddap/download/changes.html)
